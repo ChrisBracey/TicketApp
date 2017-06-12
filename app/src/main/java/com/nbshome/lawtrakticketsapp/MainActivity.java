@@ -251,6 +251,8 @@ public class MainActivity extends AppCompatActivity
     public static String regExpDate = "", regPlateNum = "", regFirstName = "", regLastName = "", regFullName = "", regAddr = "",
            regCity = "", regState = "", regZip = "", regVin = "", regMake = "", regYear = "", regBody="", regDecal = "";
 
+    public static String courtDate, courtTime, courtType, trialOffId, trialOffName, judgeId, judgeName;
+
     public void clearVars() {
         expDate = "";
 		lastName = "";
@@ -279,7 +281,7 @@ public class MainActivity extends AppCompatActivity
 		regVin = "";
 		regMake = "";
 		regYear = "";
-		regBody="";
+		regBody = "";
 		regDecal = "";
     }
 

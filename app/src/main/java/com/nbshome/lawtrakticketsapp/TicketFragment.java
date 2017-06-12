@@ -2,6 +2,7 @@ package com.nbshome.lawtrakticketsapp;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -30,10 +31,14 @@ import com.nbshome.lawtrakticketsapp.enums.State;
 import com.nbshome.lawtrakticketsapp.objects.Person;
 import com.nbshome.lawtrakticketsapp.objects.Ticket;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
+import au.com.bytecode.opencsv.CSVReader;
 import fr.ganfra.materialspinner.MaterialSpinner;
 
 
@@ -62,10 +67,11 @@ public class TicketFragment extends Fragment implements View.OnClickListener{
     private RadioGroup cdl;
     private OnFragmentInteractionListener mListener;
 
+    ArrayAdapter<String> testAdapter;
+
     public TicketFragment() {
         // Required empty public constructor
     }
-
 
     /**
      * Use this factory method to create a new instance of
@@ -95,28 +101,42 @@ public class TicketFragment extends Fragment implements View.OnClickListener{
 
     }
 
+    private int getIndex(Spinner spinner, String myString)
+    {
+        int index = 0;
+
+        for (int i=0;i<spinner.getAdapter().getCount();i++){
+            if (spinner.getItemAtPosition(i).toString().equalsIgnoreCase(myString)){
+                index = i;
+                break;
+            }
+        }
+        return index;
+    }
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        List<State> states =
+/*        List<State> states =
                 new ArrayList<State>(EnumSet.allOf(State.class));
         ArrayAdapter<State> adapter;
         adapter = new ArrayAdapter<State>(this.getActivity(), android.R.layout.simple_spinner_dropdown_item, states);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);*/
 
 
-        List<Race> races =
+        /*List<Race> races =
                 new ArrayList<Race>(EnumSet.allOf(Race.class));
         ArrayAdapter<Race> raceAdapter;
         raceAdapter = new ArrayAdapter<Race>(this.getActivity(), android.R.layout.simple_spinner_dropdown_item, races);
-        raceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        raceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);*/
 
-        List<LicenseClass> classes =
+       /* List<LicenseClass> classes =
                 new ArrayList<LicenseClass>(EnumSet.allOf(LicenseClass.class));
         ArrayAdapter<LicenseClass> classesAdapter;
         classesAdapter = new ArrayAdapter<LicenseClass>(this.getActivity(), android.R.layout.simple_spinner_dropdown_item, classes);
-        classesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        classesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);*/
 
         List<Ethnicity> ethnicities =
                 new ArrayList<Ethnicity>(EnumSet.allOf(Ethnicity.class));
@@ -124,11 +144,11 @@ public class TicketFragment extends Fragment implements View.OnClickListener{
         ethnicityAdapter = new ArrayAdapter<Ethnicity>(this.getActivity(), android.R.layout.simple_spinner_dropdown_item, ethnicities);
         ethnicityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        List<Sex> sexes =
+       /* List<Sex> sexes =
                 new ArrayList<Sex>(EnumSet.allOf(Sex.class));
         ArrayAdapter<Sex> sexAdapter;
         sexAdapter = new ArrayAdapter<Sex>(this.getActivity(), android.R.layout.simple_spinner_dropdown_item, sexes);
-        sexAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sexAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);*/
 
         List<Residence> residences =
                 new ArrayList<Residence>(EnumSet.allOf(Residence.class));
@@ -181,28 +201,44 @@ public class TicketFragment extends Fragment implements View.OnClickListener{
 		feet           = (EditText)        v.findViewById(R.id.heightFeet);
 		inches         = (EditText)        v.findViewById(R.id.heightIn);
 		dlStateSpinner = (MaterialSpinner) v.findViewById(R.id.dlStateSpinner);
-        dlClass.setAdapter(classesAdapter);
-        state.setAdapter(adapter);
+        RetrieveCsvTask task = new RetrieveCsvTask();
+        task.setSpinner(dlClass);
+        task.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/us/dr_lic_cla.csv");
+        //dlClass.setAdapter(classesAdapter);
+        //state.setAdapter(adapter);
+        RetrieveCsvTask task2 = new RetrieveCsvTask();
+        task2.setSpinner(state);
+        task2.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/us/state.csv");
         hair.setAdapter(hairAdapter);
         eyes.setAdapter(eyeAdapter);
         country.setAdapter(countryAdapter);
-        race.setAdapter(raceAdapter);
-        sex.setAdapter(sexAdapter);
+        //race.setAdapter(raceAdapter);
+        RetrieveCsvTask task3 = new RetrieveCsvTask();
+        task3.setSpinner(race);
+        task3.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/us/race.csv");
+        //sex.setAdapter(sexAdapter);
+        RetrieveCsvTask task4 = new RetrieveCsvTask();
+        task4.setSpinner(sex);
+        task4.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/us/sex.csv");
         ethnicity.setAdapter(ethnicityAdapter);
         residence.setAdapter(residenceAdapter);
-        dlStateSpinner.setAdapter(adapter);
+        //dlStateSpinner.setAdapter(adapter);
+        RetrieveCsvTask task5 = new RetrieveCsvTask();
+        task5.setSpinner(dlStateSpinner);
+        task5.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/us/state.csv");
 
 
         if (!MainActivity.firstName.equals("")) {
-            dlClass.setSelection(classesAdapter.getPosition(LicenseClass.valueOf(MainActivity.dlClass)) + 1);
+
+            //dlClass.setSelection(classesAdapter.getPosition(LicenseClass.valueOf(MainActivity.dlClass)) + 1);
             dlNum.setText(MainActivity.dlNum);
-            state.setSelection(adapter.getPosition(State.valueOf(MainActivity.state))+1);
+            //state.setSelection(adapter.getPosition(State.valueOf(MainActivity.state))+1);
             country.setSelection(countryAdapter.getPosition(Country.US)+1);
             race.setSelection(0);
-            sex.setSelection(sexAdapter.getPosition(Sex.valueOf(MainActivity.sex))+1);
+            //sex.setSelection(sexAdapter.getPosition(Sex.valueOf(MainActivity.sex))+1);
             ethnicity.setSelection(0);
             residence.setSelection(0);
-            dlStateSpinner.setSelection(adapter.getPosition(State.valueOf(MainActivity.state))+1);
+            //dlStateSpinner.setSelection(adapter.getPosition(State.valueOf(MainActivity.state))+1);
             fName.setText(MainActivity.firstName);
             mName.setText(MainActivity.middleName);
             lName.setText(MainActivity.lastName);
@@ -303,7 +339,7 @@ public class TicketFragment extends Fragment implements View.OnClickListener{
                     }
 
                     try {
-                        violator.setState((State) state.getSelectedItem());
+                        violator.setState(state.getSelectedItem().toString());
                     } catch(Exception ex)
                     {
 						Context context  = getContext();
@@ -360,7 +396,7 @@ public class TicketFragment extends Fragment implements View.OnClickListener{
 
                 }
                 try {
-                    violator.setDlState((State) dlStateSpinner.getSelectedItem());
+                    violator.setDlState(dlStateSpinner.getSelectedItem().toString());
                 } catch(Exception ex)
                 {
 					Context context  = getContext();
@@ -372,7 +408,7 @@ public class TicketFragment extends Fragment implements View.OnClickListener{
                     flag = true;
                 }
                 try {
-                    violator.setDlClass((LicenseClass) dlClass.getSelectedItem());
+                    violator.setDlClass(dlClass.getSelectedItem().toString());
                 } catch (Exception e) {
 					Context context  = getContext();
 					CharSequence err = "A Drivers License Class must be selected";
@@ -383,7 +419,7 @@ public class TicketFragment extends Fragment implements View.OnClickListener{
                     flag = true;
                 }
                 try {
-                    violator.setRace((Race) race.getSelectedItem());
+                    violator.setRace(race.getSelectedItem().toString());
                 } catch (Exception e) {
 					Context context  = getContext();
 					CharSequence err = "A Race must be selected";
@@ -394,7 +430,7 @@ public class TicketFragment extends Fragment implements View.OnClickListener{
                     flag = true;
                 }
                 try {
-                    violator.setSex((Sex) sex.getSelectedItem());
+                    violator.setSex(sex.getSelectedItem().toString());
                 } catch (Exception e) {
 					Context context  = getContext();
 					CharSequence err = "A Sex must be selected";
@@ -490,4 +526,73 @@ public class TicketFragment extends Fragment implements View.OnClickListener{
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+
+    class RetrieveCsvTask extends AsyncTask<String, Void, List<String[]>> {
+        private Exception exception;
+        private Spinner spin;
+
+        public void setSpinner(Spinner spin)
+        {
+            this.spin = spin;
+        }
+
+        @Override
+        protected List<String[]> doInBackground(String... urlStr) {
+
+            String[] next = {};
+            List<String[]> list = new ArrayList<String[]>();
+            try {
+                URL url = new URL(urlStr[0]);
+                BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+                CSVReader reader = new CSVReader(in);
+                for(;;)
+                {
+                    next = reader.readNext();
+                    if(next!= null) {
+                        list.add(next);
+                    }
+                    else {
+                        break;
+                    }
+                }
+
+                return list;
+            } catch (Exception ex)
+            {
+                this.exception = ex;
+                return null;
+            }
+        }
+
+        protected void onPostExecute(List<String[]> list)
+        {
+            ArrayList stuff = new ArrayList();
+            for(int i = 1; i<list.size(); ++i)
+            {
+                if(spin.getId() != R.id.race)
+                    stuff.add(list.get(i)[0]);
+                else
+                    stuff.add(list.get(i)[1]);
+            }
+
+            testAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_dropdown_item, stuff);
+
+            spin.setAdapter(testAdapter);
+
+            if(spin.getId() == R.id.dlClass)
+            {
+                dlClass.setSelection(getIndex(dlClass, MainActivity.dlClass) + 1);
+            } else if(spin.getId() == R.id.state)
+            {
+                state.setSelection(getIndex(state, MainActivity.regState) + 1);
+            } else if(spin.getId() == R.id.dlStateSpinner) {
+                dlStateSpinner.setSelection(getIndex(dlStateSpinner, MainActivity.state) + 1);
+            } else if(spin.getId() == R.id.sex) {
+                sex.setSelection(getIndex(sex, MainActivity.sex) + 1);
+            }
+
+        }
+    }
+
 }

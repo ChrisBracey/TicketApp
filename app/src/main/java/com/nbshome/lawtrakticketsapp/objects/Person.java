@@ -23,16 +23,16 @@ public class Person {
     private String city;
     private String zip;
     private String dlNum;
-    private LicenseClass dlClass;
+    private String dlClass;
     private String dob;
     private String height;
     private String weight;
-    private State state, dlState;
+    private String state, dlState;
     private Hair hair;
     private Eyes eyes;
-    private Sex sex;
+    private String sex;
     private boolean cdl;
-    private Race race;
+    private String race;
     private Country country;
     private String phone;
     private String ssn;
@@ -47,9 +47,9 @@ public class Person {
     }
 
     public Person(String fName, String mName, String lName, String suffix, String addr,
-                  String city, String zip, String dlNum, LicenseClass dlClass, String dob,
-                  String height, String weight, State state, State dlState, Hair hair, Eyes eyes,
-                  Sex sex, boolean cdl, Race race, Country country, String phone, String ssn,
+                  String city, String zip, String dlNum, String dlClass, String dob,
+                  String height, String weight, String state, String dlState, Hair hair, Eyes eyes,
+                  String sex, boolean cdl, String race, Country country, String phone, String ssn,
                   Ethnicity ethnicity, Residence residence, ArrayList<Ticket> tickets)
     {
         this.fName = fName;
@@ -80,7 +80,7 @@ public class Person {
     }
 
     public Person(String fullName, String addr,
-                  String city, String zip, State state)
+                  String city, String zip, String state)
     {
         this.fullName = fullName;
         this.addr = addr;
@@ -218,11 +218,11 @@ public class Person {
         this.dlNum = dlNum;
     }
 
-    public LicenseClass getDlClass() {
+    public String getDlClass() {
         return dlClass;
     }
 
-    public void setDlClass(LicenseClass dlClass) {
+    public void setDlClass(String dlClass) {
         this.dlClass = dlClass;
     }
 
@@ -250,19 +250,19 @@ public class Person {
         this.weight = weight;
     }
 
-    public State getState() {
+    public String getState() {
         return state;
     }
 
-    public void setState(State state) {
+    public void setState(String state) {
         this.state = state;
     }
 
-    public State getDlState() {
+    public String getDlState() {
         return dlState;
     }
 
-    public void setDlState(State dlState) {
+    public void setDlState(String dlState) {
         this.dlState = dlState;
     }
 
@@ -282,11 +282,11 @@ public class Person {
         this.eyes = eyes;
     }
 
-    public Sex getSex() {
+    public String getSex() {
         return sex;
     }
 
-    public void setSex(Sex sex) {
+    public void setSex(String sex) {
         this.sex = sex;
     }
 
@@ -298,11 +298,11 @@ public class Person {
         this.cdl = cdl;
     }
 
-    public Race getRace() {
+    public String getRace() {
         return race;
     }
 
-    public void setRace(Race race) {
+    public void setRace(String race) {
         this.race = race;
     }
 

@@ -315,7 +315,7 @@ public class Registration extends Fragment implements View.OnClickListener{
             if(!flag) {
                 Person owner = new Person(ownerFullName.getText().toString(),
                         ownerAddr.getText().toString(), ownerCity.getText().toString(),
-                        ownerZip.getText().toString(), (State) ownerState.getSelectedItem());
+                        ownerZip.getText().toString(),  ownerState.getSelectedItem().toString());
 
                 owner.setVehicle(new Vehicle(vehicleMake.getSelectedItem().toString(),
                         vehicleYear.getText().toString(), plateNum.getText().toString(),

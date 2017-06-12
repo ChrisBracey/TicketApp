@@ -174,7 +174,14 @@
                         app:layout_constraintTop_toTopOf="parent" />
                 </android.support.design.widget.TextInputLayout>
 
-
+                <Button
+                    android:id="@+id/submitCourt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorPrimary"
+                    android:elevation="2dp"
+                    android:text="Submit"
+                    android:textColor="#fff" />
 
 
             </LinearLayout>
