@@ -1,0 +1,195 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="20dp"
+    tools:context="com.nbshome.lawtrakticketsapp.Registration">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="40dp">
+
+        <ScrollView
+            android:layout_width="368dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/header1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Owner Information"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:id="@+id/ownerFullName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:ems="10"
+                        android:hint="Full Name"
+                        android:inputType="textPersonName"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/ownerAddr"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:ems="10"
+                        android:hint="Address"
+                        android:inputType="textPostalAddress"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/ownerCity"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:ems="10"
+                        android:hint="City"
+                        android:inputType="textCapWords"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </android.support.design.widget.TextInputLayout>
+
+                <fr.ganfra.materialspinner.MaterialSpinner
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:ms_multiline="false"
+                    app:ms_enableErrorLabel="false"
+                    app:ms_hint="State"
+                    app:ms_floatingLabelText="State"
+                    android:id="@+id/ownerState"/>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/ownerZip"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:digits="0123456789-"
+                        android:ems="10"
+                        android:hint="ZIP"
+                        android:inputType="number" />
+                </android.support.design.widget.TextInputLayout>
+
+                <TextView
+                    android:id="@+id/header2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Vehicle Information"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
+
+
+                <fr.ganfra.materialspinner.MaterialSpinner
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:ms_multiline="false"
+                    app:ms_enableErrorLabel="false"
+                    app:ms_hint="Vehicle Make"
+                    app:ms_floatingLabelText="Vehicle Make"
+                    android:id="@+id/vehicleMake"/>
+
+
+                <fr.ganfra.materialspinner.MaterialSpinner
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:ms_multiline="false"
+                    app:ms_enableErrorLabel="false"
+                    app:ms_hint="Vehicle Type"
+                    app:ms_floatingLabelText="Vehicle Type"
+                    android:id="@+id/vehType"/>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/vehicleYear"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:hint="Year"
+                        android:inputType="number" />
+                </android.support.design.widget.TextInputLayout>
+
+                <fr.ganfra.materialspinner.MaterialSpinner
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:ms_multiline="false"
+                    app:ms_enableErrorLabel="false"
+                    app:ms_hint="State"
+                    app:ms_floatingLabelText="State"
+                    android:id="@+id/plateState"/>
+
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/plateNum"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:hint="License Plate Number"
+                        android:inputType="textCapCharacters" />
+
+                </android.support.design.widget.TextInputLayout>
+
+
+
+
+                <Button
+                    android:id="@+id/submitReg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorPrimary"
+                    android:elevation="2dp"
+                    android:text="Submit"
+                    android:textColor="#fff" />
+
+            </LinearLayout>
+        </ScrollView>
+    </android.support.constraint.ConstraintLayout>
+
+</FrameLayout>
