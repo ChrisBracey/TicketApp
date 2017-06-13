@@ -150,29 +150,29 @@ public class TicketFragment extends Fragment implements View.OnClickListener{
         sexAdapter = new ArrayAdapter<Sex>(this.getActivity(), android.R.layout.simple_spinner_dropdown_item, sexes);
         sexAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);*/
 
-        List<Residence> residences =
+        /*List<Residence> residences =
                 new ArrayList<Residence>(EnumSet.allOf(Residence.class));
         ArrayAdapter<Residence> residenceAdapter;
         residenceAdapter = new ArrayAdapter<Residence>(this.getActivity(), android.R.layout.simple_spinner_dropdown_item, residences);
-        residenceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        residenceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);*/
 
         List<Country> countries =
                 new ArrayList<Country>(EnumSet.allOf(Country.class));
         ArrayAdapter<Country> countryAdapter;
         countryAdapter = new ArrayAdapter<Country>(this.getActivity(), android.R.layout.simple_spinner_dropdown_item, countries);
-        residenceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        countryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        List<Hair> hairColors =
+       /* List<Hair> hairColors =
                 new ArrayList<Hair>(EnumSet.allOf(Hair.class));
         ArrayAdapter<Hair> hairAdapter;
         hairAdapter = new ArrayAdapter<Hair>(this.getActivity(), android.R.layout.simple_spinner_dropdown_item, hairColors);
-        hairAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        hairAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);*/
 
-        List<Eyes> eyeColors =
+       /* List<Eyes> eyeColors =
                 new ArrayList<Eyes>(EnumSet.allOf(Eyes.class));
         ArrayAdapter<Eyes> eyeAdapter;
         eyeAdapter = new ArrayAdapter<Eyes>(this.getActivity(), android.R.layout.simple_spinner_dropdown_item, eyeColors);
-        eyeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        eyeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);*/
         
 		View v         = inflater.inflate(R.layout.fragment_ticket, container, false);
 		Button submit  = (Button) v.findViewById(R.id.submit);
@@ -209,8 +209,14 @@ public class TicketFragment extends Fragment implements View.OnClickListener{
         RetrieveCsvTask task2 = new RetrieveCsvTask();
         task2.setSpinner(state);
         task2.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/us/state.csv");
-        hair.setAdapter(hairAdapter);
-        eyes.setAdapter(eyeAdapter);
+        //hair.setAdapter(hairAdapter);
+        RetrieveCsvTask task7 = new RetrieveCsvTask();
+        task7.setSpinner(hair);
+        task7.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/us/hair.csv");
+        //eyes.setAdapter(eyeAdapter);
+        RetrieveCsvTask task8 = new RetrieveCsvTask();
+        task8.setSpinner(eyes);
+        task8.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/us/eyes.csv");
         country.setAdapter(countryAdapter);
         //race.setAdapter(raceAdapter);
         RetrieveCsvTask task3 = new RetrieveCsvTask();
@@ -221,7 +227,10 @@ public class TicketFragment extends Fragment implements View.OnClickListener{
         task4.setSpinner(sex);
         task4.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/us/sex.csv");
         ethnicity.setAdapter(ethnicityAdapter);
-        residence.setAdapter(residenceAdapter);
+        //residence.setAdapter(residenceAdapter);
+        RetrieveCsvTask task6 = new RetrieveCsvTask();
+        task6.setSpinner(residence);
+        task6.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/us/res.csv");
         //dlStateSpinner.setAdapter(adapter);
         RetrieveCsvTask task5 = new RetrieveCsvTask();
         task5.setSpinner(dlStateSpinner);
@@ -407,9 +416,9 @@ public class TicketFragment extends Fragment implements View.OnClickListener{
                     toast.show();
                     flag = true;
                 }
-                try {
+                if(!dlClass.getSelectedItem().toString().equals("Drivers License Number")) {
                     violator.setDlClass(dlClass.getSelectedItem().toString());
-                } catch (Exception e) {
+                } else {
 					Context context  = getContext();
 					CharSequence err = "A Drivers License Class must be selected";
 					int duration     = Toast.LENGTH_SHORT;
@@ -418,20 +427,20 @@ public class TicketFragment extends Fragment implements View.OnClickListener{
                     toast.show();
                     flag = true;
                 }
-                try {
+                if(!race.getSelectedItem().toString().equals("Race")) {
                     violator.setRace(race.getSelectedItem().toString());
-                } catch (Exception e) {
-					Context context  = getContext();
-					CharSequence err = "A Race must be selected";
-					int duration     = Toast.LENGTH_SHORT;
-					
-					Toast toast      = Toast.makeText(context, err, duration);
+                } else {
+                    Context context = getContext();
+                    CharSequence err = "A Race must be selected";
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(context, err, duration);
                     toast.show();
                     flag = true;
                 }
-                try {
+                if(!sex.getSelectedItem().toString().equals("Sex")) {
                     violator.setSex(sex.getSelectedItem().toString());
-                } catch (Exception e) {
+                } else {
 					Context context  = getContext();
 					CharSequence err = "A Sex must be selected";
 					int duration     = Toast.LENGTH_SHORT;
@@ -445,10 +454,10 @@ public class TicketFragment extends Fragment implements View.OnClickListener{
                 } catch (Exception e) {
                     violator.setEthnicity(Ethnicity.U);
                 }
-                try {
-                    violator.setResidence((Residence) residence.getSelectedItem());
-                } catch (Exception e) {
-                    violator.setResidence(Residence.U);
+                if(!residence.getSelectedItem().toString().equals("Residence")) {
+                    violator.setResidence(residence.getSelectedItem().toString());
+                } else {
+                    violator.setResidence("Unknown");
                 }
 
                 try {
@@ -463,15 +472,15 @@ public class TicketFragment extends Fragment implements View.OnClickListener{
                     flag = true;
                 }
 
-                try {
-                    violator.setHair((Hair) hair.getSelectedItem());
-                } catch (Exception e) {
-                    violator.setHair(Hair.XXX);
+                if(!hair.getSelectedItem().toString().equals("Hair Color")) {
+                    violator.setHair(hair.getSelectedItem().toString());
+                } else {
+                    violator.setHair("XXX");
                 }
-                try {
-                    violator.setEyes((Eyes) eyes.getSelectedItem());
-                } catch (Exception e) {
-                    violator.setEyes(Eyes.XXX);
+                if(!eyes.getSelectedItem().toString().equals("Eye Color")) {
+                    violator.setEyes(eyes.getSelectedItem().toString());
+                } else {
+                    violator.setEyes("XXX");
                 }
                 violator.setCdl(cdl.getCheckedRadioButtonId() == R.id.cdlYes);
             } catch (NumberFormatException e) {
@@ -570,7 +579,7 @@ public class TicketFragment extends Fragment implements View.OnClickListener{
             ArrayList stuff = new ArrayList();
             for(int i = 1; i<list.size(); ++i)
             {
-                if(spin.getId() != R.id.race)
+                if(spin.getId() != R.id.race && spin.getId() != R.id.residence)
                     stuff.add(list.get(i)[0]);
                 else
                     stuff.add(list.get(i)[1]);

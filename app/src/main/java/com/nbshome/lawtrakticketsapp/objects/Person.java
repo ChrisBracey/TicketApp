@@ -28,8 +28,8 @@ public class Person {
     private String height;
     private String weight;
     private String state, dlState;
-    private Hair hair;
-    private Eyes eyes;
+    private String hair;
+    private String eyes;
     private String sex;
     private boolean cdl;
     private String race;
@@ -37,7 +37,7 @@ public class Person {
     private String phone;
     private String ssn;
     private Ethnicity ethnicity;
-    private Residence residence;
+    private String residence;
     private Vehicle vehicle;
     private ArrayList<Ticket> tickets;
 
@@ -48,9 +48,9 @@ public class Person {
 
     public Person(String fName, String mName, String lName, String suffix, String addr,
                   String city, String zip, String dlNum, String dlClass, String dob,
-                  String height, String weight, String state, String dlState, Hair hair, Eyes eyes,
+                  String height, String weight, String state, String dlState, String hair, String eyes,
                   String sex, boolean cdl, String race, Country country, String phone, String ssn,
-                  Ethnicity ethnicity, Residence residence, ArrayList<Ticket> tickets)
+                  Ethnicity ethnicity, String residence, ArrayList<Ticket> tickets)
     {
         this.fName = fName;
         this.mName = mName;
@@ -145,11 +145,11 @@ public class Person {
         this.ethnicity = ethnicity;
     }
 
-    public Residence getResidence() {
+    public String getResidence() {
         return residence;
     }
 
-    public void setResidence(Residence residence) {
+    public void setResidence(String residence) {
         this.residence = residence;
     }
 
@@ -266,19 +266,19 @@ public class Person {
         this.dlState = dlState;
     }
 
-    public Hair getHair() {
+    public String getHair() {
         return hair;
     }
 
-    public void setHair(Hair hair) {
+    public void setHair(String hair) {
         this.hair = hair;
     }
 
-    public Eyes getEyes() {
+    public String getEyes() {
         return eyes;
     }
 
-    public void setEyes(Eyes eyes) {
+    public void setEyes(String eyes) {
         this.eyes = eyes;
     }
 
