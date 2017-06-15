@@ -119,24 +119,6 @@ public class TicketFragment extends Fragment implements View.OnClickListener{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-/*        List<State> states =
-                new ArrayList<State>(EnumSet.allOf(State.class));
-        ArrayAdapter<State> adapter;
-        adapter = new ArrayAdapter<State>(this.getActivity(), android.R.layout.simple_spinner_dropdown_item, states);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);*/
-
-
-        /*List<Race> races =
-                new ArrayList<Race>(EnumSet.allOf(Race.class));
-        ArrayAdapter<Race> raceAdapter;
-        raceAdapter = new ArrayAdapter<Race>(this.getActivity(), android.R.layout.simple_spinner_dropdown_item, races);
-        raceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);*/
-
-       /* List<LicenseClass> classes =
-                new ArrayList<LicenseClass>(EnumSet.allOf(LicenseClass.class));
-        ArrayAdapter<LicenseClass> classesAdapter;
-        classesAdapter = new ArrayAdapter<LicenseClass>(this.getActivity(), android.R.layout.simple_spinner_dropdown_item, classes);
-        classesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);*/
 
         List<Ethnicity> ethnicities =
                 new ArrayList<Ethnicity>(EnumSet.allOf(Ethnicity.class));
@@ -144,35 +126,11 @@ public class TicketFragment extends Fragment implements View.OnClickListener{
         ethnicityAdapter = new ArrayAdapter<Ethnicity>(this.getActivity(), android.R.layout.simple_spinner_dropdown_item, ethnicities);
         ethnicityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-       /* List<Sex> sexes =
-                new ArrayList<Sex>(EnumSet.allOf(Sex.class));
-        ArrayAdapter<Sex> sexAdapter;
-        sexAdapter = new ArrayAdapter<Sex>(this.getActivity(), android.R.layout.simple_spinner_dropdown_item, sexes);
-        sexAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);*/
-
-        /*List<Residence> residences =
-                new ArrayList<Residence>(EnumSet.allOf(Residence.class));
-        ArrayAdapter<Residence> residenceAdapter;
-        residenceAdapter = new ArrayAdapter<Residence>(this.getActivity(), android.R.layout.simple_spinner_dropdown_item, residences);
-        residenceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);*/
-
         List<Country> countries =
                 new ArrayList<Country>(EnumSet.allOf(Country.class));
         ArrayAdapter<Country> countryAdapter;
         countryAdapter = new ArrayAdapter<Country>(this.getActivity(), android.R.layout.simple_spinner_dropdown_item, countries);
         countryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-       /* List<Hair> hairColors =
-                new ArrayList<Hair>(EnumSet.allOf(Hair.class));
-        ArrayAdapter<Hair> hairAdapter;
-        hairAdapter = new ArrayAdapter<Hair>(this.getActivity(), android.R.layout.simple_spinner_dropdown_item, hairColors);
-        hairAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);*/
-
-       /* List<Eyes> eyeColors =
-                new ArrayList<Eyes>(EnumSet.allOf(Eyes.class));
-        ArrayAdapter<Eyes> eyeAdapter;
-        eyeAdapter = new ArrayAdapter<Eyes>(this.getActivity(), android.R.layout.simple_spinner_dropdown_item, eyeColors);
-        eyeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);*/
         
 		View v         = inflater.inflate(R.layout.fragment_ticket, container, false);
 		Button submit  = (Button) v.findViewById(R.id.submit);
@@ -204,34 +162,26 @@ public class TicketFragment extends Fragment implements View.OnClickListener{
         RetrieveCsvTask task = new RetrieveCsvTask();
         task.setSpinner(dlClass);
         task.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/us/dr_lic_cla.csv");
-        //dlClass.setAdapter(classesAdapter);
-        //state.setAdapter(adapter);
         RetrieveCsvTask task2 = new RetrieveCsvTask();
         task2.setSpinner(state);
         task2.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/us/state.csv");
-        //hair.setAdapter(hairAdapter);
         RetrieveCsvTask task7 = new RetrieveCsvTask();
         task7.setSpinner(hair);
         task7.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/us/hair.csv");
-        //eyes.setAdapter(eyeAdapter);
         RetrieveCsvTask task8 = new RetrieveCsvTask();
         task8.setSpinner(eyes);
         task8.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/us/eyes.csv");
         country.setAdapter(countryAdapter);
-        //race.setAdapter(raceAdapter);
         RetrieveCsvTask task3 = new RetrieveCsvTask();
         task3.setSpinner(race);
         task3.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/us/race.csv");
-        //sex.setAdapter(sexAdapter);
         RetrieveCsvTask task4 = new RetrieveCsvTask();
         task4.setSpinner(sex);
         task4.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/us/sex.csv");
         ethnicity.setAdapter(ethnicityAdapter);
-        //residence.setAdapter(residenceAdapter);
         RetrieveCsvTask task6 = new RetrieveCsvTask();
         task6.setSpinner(residence);
         task6.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/us/res.csv");
-        //dlStateSpinner.setAdapter(adapter);
         RetrieveCsvTask task5 = new RetrieveCsvTask();
         task5.setSpinner(dlStateSpinner);
         task5.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/us/state.csv");
@@ -239,15 +189,11 @@ public class TicketFragment extends Fragment implements View.OnClickListener{
 
         if (!MainActivity.firstName.equals("")) {
 
-            //dlClass.setSelection(classesAdapter.getPosition(LicenseClass.valueOf(MainActivity.dlClass)) + 1);
             dlNum.setText(MainActivity.dlNum);
-            //state.setSelection(adapter.getPosition(State.valueOf(MainActivity.state))+1);
             country.setSelection(countryAdapter.getPosition(Country.US)+1);
             race.setSelection(0);
-            //sex.setSelection(sexAdapter.getPosition(Sex.valueOf(MainActivity.sex))+1);
             ethnicity.setSelection(0);
             residence.setSelection(0);
-            //dlStateSpinner.setSelection(adapter.getPosition(State.valueOf(MainActivity.state))+1);
             fName.setText(MainActivity.firstName);
             mName.setText(MainActivity.middleName);
             lName.setText(MainActivity.lastName);
@@ -404,9 +350,9 @@ public class TicketFragment extends Fragment implements View.OnClickListener{
                 } catch (Exception e) {
 
                 }
-                try {
+                if(!dlStateSpinner.getSelectedItem().toString().equals("Drivers License State")) {
                     violator.setDlState(dlStateSpinner.getSelectedItem().toString());
-                } catch(Exception ex)
+                } else
                 {
 					Context context  = getContext();
 					CharSequence err = "A Drivers License State must be selected";

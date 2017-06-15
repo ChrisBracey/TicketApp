@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -97,11 +98,11 @@ public class Registration extends Fragment implements View.OnClickListener{
         btn.setOnClickListener(this);
 
 
-        List<State> states =
+       /* List<State> states =
                 new ArrayList<State>(EnumSet.allOf(State.class));
         ArrayAdapter<State> adapter;
         adapter = new ArrayAdapter<State>(this.getActivity(), android.R.layout.simple_spinner_dropdown_item, states);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);*/
 
         List<VehicleType> types =
                 new ArrayList<VehicleType>(EnumSet.allOf(VehicleType.class));
@@ -117,33 +118,38 @@ public class Registration extends Fragment implements View.OnClickListener{
 
 
 
-        ownerFullName = (EditText) v.findViewById(R.id.ownerFullName);
-        ownerAddr = (EditText) v.findViewById(R.id.ownerAddr);
-        ownerCity = (EditText) v.findViewById(R.id.ownerCity);
-        ownerState = (MaterialSpinner) v.findViewById(R.id.ownerState);
-        ownerZip = (EditText) v.findViewById(R.id.ownerZip);
-        vehicleMake = (MaterialSpinner) v.findViewById(R.id.vehicleMake);
-        vehicleYear = (EditText) v.findViewById(R.id.vehicleYear);
-        plateNum = (EditText) v.findViewById(R.id.plateNum);
-        plateState = (MaterialSpinner) v.findViewById(R.id.plateState);
-        vehType = (MaterialSpinner) v.findViewById(R.id.vehType);
+        ownerFullName = (EditText)        v.findViewById(R.id.ownerFullName);
+        ownerAddr     = (EditText)        v.findViewById(R.id.ownerAddr);
+        ownerCity     = (EditText)        v.findViewById(R.id.ownerCity);
+        ownerState    = (MaterialSpinner) v.findViewById(R.id.ownerState);
+        ownerZip      = (EditText)        v.findViewById(R.id.ownerZip);
+        vehicleMake   = (MaterialSpinner) v.findViewById(R.id.vehicleMake);
+        vehicleYear   = (EditText)        v.findViewById(R.id.vehicleYear);
+        plateNum      = (EditText)        v.findViewById(R.id.plateNum);
+        plateState    = (MaterialSpinner) v.findViewById(R.id.plateState);
+        vehType       = (MaterialSpinner) v.findViewById(R.id.vehType);
 
         vehType.setAdapter(typeAdapter);
-        ownerState.setAdapter(adapter);
-        plateState.setAdapter(adapter);
+        //ownerState.setAdapter(adapter);
+        RetrieveCsvTask task2 = new RetrieveCsvTask();
+        task2.setSpinner(ownerState);
+        task2.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/us/state.csv");
+        //plateState.setAdapter(adapter);
+        RetrieveCsvTask task3 = new RetrieveCsvTask();
+        task3.setSpinner(plateState);
+        task3.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/us/state.csv");
 
         if (!MainActivity.regFullName.equals("")) {
 
             ownerFullName.setText(MainActivity.regFullName);
             ownerAddr.setText(MainActivity.regAddr);
             ownerCity.setText(MainActivity.regCity);
-            ownerState.setSelection(adapter.getPosition(State.valueOf(MainActivity.regState)) + 1);
+            //ownerState.setSelection(adapter.getPosition(State.valueOf(MainActivity.regState)) + 1);
             ownerZip.setText(MainActivity.regZip);
-
 
             vehicleYear.setText(MainActivity.regYear);
             plateNum.setText(MainActivity.regPlateNum);
-            plateState.setSelection(adapter.getPosition(State.valueOf(MainActivity.regState)) + 1);
+            //plateState.setSelection(adapter.getPosition(State.valueOf(MainActivity.regState)) + 1);
 
 
 
@@ -415,8 +421,14 @@ public class Registration extends Fragment implements View.OnClickListener{
             testAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_dropdown_item, stuff);
 
             spin.setAdapter(testAdapter);
-
-            if(!MainActivity.regMake.equals(""))
+            if(spin.getId() == R.id.ownerState)
+            {
+                Log.d("State", MainActivity.regState);
+                ownerState.setSelection(getIndex(ownerState, MainActivity.regState) + 1);
+            } else if(spin.getId() == R.id.plateState)
+            {
+                plateState.setSelection(getIndex(plateState, MainActivity.regState) + 1);
+            } else if(spin.getId() == R.id.vehicleMake)
                 spin.setSelection(getIndex(vehicleMake, MainActivity.regMake) + 1);
 
         }
