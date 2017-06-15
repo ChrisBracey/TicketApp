@@ -26,7 +26,8 @@
             android:text="Scan License"
             android:textAlignment="center"
             android:textColor="@color/colorAccent"
-            android:textSize="40sp" />
+            android:textSize="40sp"
+            android:enabled="false"/>
 
         <Button
             android:id="@+id/skip"
@@ -40,7 +41,60 @@
             android:text="Skip"
             android:textAlignment="center"
             android:textColor="@color/colorPrimary"
-            android:textSize="40sp" />
+            android:textSize="40sp"
+            android:enabled="false"/>
     </LinearLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:id="@+id/tokenLayout">
+
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="368dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="8dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginRight="8dp"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:id="@+id/tokenTextLayout">
+
+            <EditText
+                android:id="@+id/token"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:ems="10"
+                android:hint="Token"
+                android:inputType="number"
+                android:maxLength="6"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </android.support.design.widget.TextInputLayout>
+
+        <Button
+            android:id="@+id/submitToken"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:background="@color/colorPrimary"
+            android:elevation="2dp"
+            android:text="Submit"
+            android:textColor="#fff"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="8dp"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintTop_toBottomOf="@+id/tokenTextLayout" />
+
+    </android.support.constraint.ConstraintLayout>
 
 </FrameLayout>

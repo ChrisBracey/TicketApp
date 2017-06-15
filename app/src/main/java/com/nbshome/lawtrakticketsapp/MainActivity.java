@@ -2,9 +2,12 @@ package com.nbshome.lawtrakticketsapp;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
@@ -17,7 +20,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
@@ -25,8 +31,14 @@ import com.google.android.gms.vision.barcode.Barcode;
 import com.nbshome.lawtrakticketsapp.barcode.BarcodeCaptureActivity;
 import com.nbshome.lawtrakticketsapp.objects.Person;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+
+import au.com.bytecode.opencsv.CSVReader;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener,
@@ -54,12 +66,15 @@ public class MainActivity extends AppCompatActivity
             setSupportActionBar(toolbar);
             findViewById(R.id.read_barcode).setOnClickListener(this);
             findViewById(R.id.skip).setOnClickListener(this);
+            findViewById(R.id.submitToken).setOnClickListener(this);
 
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                     this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
             drawer.setDrawerListener(toggle);
             toggle.syncState();
+            RetrieveCsvTask task = new RetrieveCsvTask();
+            task.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/us/myagency.csv");
 
             NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
             navigationView.setNavigationItemSelectedListener(this);
@@ -119,6 +134,22 @@ public class MainActivity extends AppCompatActivity
 
                 setTitle("Violator");
 
+            }
+        } else if(v.getId() == R.id.submitToken)
+        {
+            EditText token = (EditText) findViewById(R.id.token);
+            if(token.getText().toString().equals(this.token))
+            {
+                Button btn = (Button) findViewById(R.id.read_barcode);
+                Button btn2 = (Button) findViewById(R.id.skip);
+                btn.setEnabled(true);
+                btn2.setEnabled(true);
+                findViewById(R.id.submitToken).setEnabled(false);
+                findViewById(R.id.token).setEnabled(false);
+                findViewById(R.id.tokenLayout).setVisibility(View.INVISIBLE);
+            } else {
+                TextInputLayout err = (TextInputLayout) findViewById(R.id.tokenTextLayout);
+                err.setError("Wrong Token Value");
             }
         }
 
@@ -492,4 +523,45 @@ public class MainActivity extends AppCompatActivity
     public void onFragmentInteraction(Uri uri) {
 
     }
+
+ String token = "";
+    class RetrieveCsvTask extends AsyncTask<String, Void, List<String[]>> {
+        private Exception exception;
+
+        @Override
+        protected List<String[]> doInBackground(String... urlStr) {
+
+            String[] next = {};
+            List<String[]> list = new ArrayList<String[]>();
+            try {
+                URL url = new URL(urlStr[0]);
+                BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+                CSVReader reader = new CSVReader(in);
+                for(;;)
+                {
+                    next = reader.readNext();
+                    if(next!= null) {
+                        list.add(next);
+                    }
+                    else {
+                        break;
+                    }
+                }
+
+                return list;
+            } catch (Exception ex)
+            {
+                this.exception = ex;
+                return null;
+            }
+        }
+
+        protected void onPostExecute(List<String[]> list)
+        {
+            ArrayList stuff = new ArrayList();
+            token = list.get(1)[list.get(1).length-1];
+
+        }
+    }
+
 }
