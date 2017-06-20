@@ -3,13 +3,6 @@ package com.nbshome.lawtrakticketsapp.objects;
 
 import com.nbshome.lawtrakticketsapp.enums.Country;
 import com.nbshome.lawtrakticketsapp.enums.Ethnicity;
-import com.nbshome.lawtrakticketsapp.enums.Eyes;
-import com.nbshome.lawtrakticketsapp.enums.Hair;
-import com.nbshome.lawtrakticketsapp.enums.LicenseClass;
-import com.nbshome.lawtrakticketsapp.enums.Race;
-import com.nbshome.lawtrakticketsapp.enums.Residence;
-import com.nbshome.lawtrakticketsapp.enums.Sex;
-import com.nbshome.lawtrakticketsapp.enums.State;
 
 import java.util.ArrayList;
 

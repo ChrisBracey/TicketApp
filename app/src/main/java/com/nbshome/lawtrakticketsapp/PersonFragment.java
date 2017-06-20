@@ -2,22 +2,11 @@ package com.nbshome.lawtrakticketsapp;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
-import au.com.bytecode.opencsv.CSVReader;
 
 import static com.nbshome.lawtrakticketsapp.MainActivity.parsedOutput;
 
@@ -44,7 +33,7 @@ public class PersonFragment extends Fragment implements View.OnClickListener {
     private OnFragmentInteractionListener mListener;
 
     public PersonFragment() {
-        // Required empty public constructor
+        //Required empty public constructor
     }
 
     /**

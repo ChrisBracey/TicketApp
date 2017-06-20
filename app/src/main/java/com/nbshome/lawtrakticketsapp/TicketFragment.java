@@ -6,11 +6,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,16 +16,8 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.google.android.gms.cast.framework.media.widget.MiniControllerFragment;
 import com.nbshome.lawtrakticketsapp.enums.Country;
 import com.nbshome.lawtrakticketsapp.enums.Ethnicity;
-import com.nbshome.lawtrakticketsapp.enums.Eyes;
-import com.nbshome.lawtrakticketsapp.enums.Hair;
-import com.nbshome.lawtrakticketsapp.enums.LicenseClass;
-import com.nbshome.lawtrakticketsapp.enums.Race;
-import com.nbshome.lawtrakticketsapp.enums.Residence;
-import com.nbshome.lawtrakticketsapp.enums.Sex;
-import com.nbshome.lawtrakticketsapp.enums.State;
 import com.nbshome.lawtrakticketsapp.objects.Person;
 import com.nbshome.lawtrakticketsapp.objects.Ticket;
 
@@ -534,18 +524,22 @@ public class TicketFragment extends Fragment implements View.OnClickListener{
             testAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_dropdown_item, stuff);
 
             spin.setAdapter(testAdapter);
+            try {
+                if (spin.getId() == R.id.dlClass) {
+                    dlClass.setSelection(getIndex(dlClass, MainActivity.dlClass) + 1);
+                } else if (spin.getId() == R.id.state) {
+                    state.setSelection(getIndex(state, MainActivity.regState) + 1);
+                } else if (spin.getId() == R.id.dlStateSpinner) {
+                    dlStateSpinner.setSelection(getIndex(dlStateSpinner, MainActivity.state) + 1);
+                } else if (spin.getId() == R.id.sex) {
+                    sex.setSelection(getIndex(sex, MainActivity.sex) + 1);
+                }
+            } catch(Exception ex) {
 
-            if(spin.getId() == R.id.dlClass)
-            {
-                dlClass.setSelection(getIndex(dlClass, MainActivity.dlClass) + 1);
-            } else if(spin.getId() == R.id.state)
-            {
-                state.setSelection(getIndex(state, MainActivity.regState) + 1);
-            } else if(spin.getId() == R.id.dlStateSpinner) {
-                dlStateSpinner.setSelection(getIndex(dlStateSpinner, MainActivity.state) + 1);
-            } else if(spin.getId() == R.id.sex) {
-                sex.setSelection(getIndex(sex, MainActivity.sex) + 1);
+
+
             }
+
 
         }
     }

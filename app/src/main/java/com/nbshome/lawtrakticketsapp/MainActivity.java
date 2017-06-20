@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity
                 findViewById(R.id.tokenLayout).setVisibility(View.INVISIBLE);
             } else {
                 TextInputLayout err = (TextInputLayout) findViewById(R.id.tokenTextLayout);
-                err.setError("Wrong Token Value");
+                err.setError("Wrong Token Value. Please Try again.");
             }
         }
 

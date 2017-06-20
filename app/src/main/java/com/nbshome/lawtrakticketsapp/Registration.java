@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
@@ -421,15 +420,17 @@ public class Registration extends Fragment implements View.OnClickListener{
             testAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_dropdown_item, stuff);
 
             spin.setAdapter(testAdapter);
-            if(spin.getId() == R.id.ownerState)
-            {
-                Log.d("State", MainActivity.regState);
-                ownerState.setSelection(getIndex(ownerState, MainActivity.regState) + 1);
-            } else if(spin.getId() == R.id.plateState)
-            {
-                plateState.setSelection(getIndex(plateState, MainActivity.regState) + 1);
-            } else if(spin.getId() == R.id.vehicleMake)
-                spin.setSelection(getIndex(vehicleMake, MainActivity.regMake) + 1);
+            try {
+                if (spin.getId() == R.id.ownerState) {
+                    Log.d("State", MainActivity.regState);
+                    ownerState.setSelection(getIndex(ownerState, MainActivity.regState) + 1);
+                } else if (spin.getId() == R.id.plateState) {
+                    plateState.setSelection(getIndex(plateState, MainActivity.regState) + 1);
+                } else if (spin.getId() == R.id.vehicleMake)
+                    spin.setSelection(getIndex(vehicleMake, MainActivity.regMake) + 1);
+            } catch(Exception ex) {
+
+            }
 
         }
     }
