@@ -151,30 +151,30 @@ public class TicketFragment extends Fragment implements View.OnClickListener{
 		dlStateSpinner = (MaterialSpinner) v.findViewById(R.id.dlStateSpinner);
         RetrieveCsvTask task = new RetrieveCsvTask();
         task.setSpinner(dlClass);
-        task.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/us/dr_lic_cla.csv");
+        task.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/" + MainActivity.ori + "/dr_lic_cla.csv");
         RetrieveCsvTask task2 = new RetrieveCsvTask();
         task2.setSpinner(state);
-        task2.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/us/state.csv");
+        task2.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/" + MainActivity.ori + "/state.csv");
         RetrieveCsvTask task7 = new RetrieveCsvTask();
         task7.setSpinner(hair);
-        task7.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/us/hair.csv");
+        task7.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/" + MainActivity.ori + "/hair.csv");
         RetrieveCsvTask task8 = new RetrieveCsvTask();
         task8.setSpinner(eyes);
-        task8.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/us/eyes.csv");
+        task8.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/" + MainActivity.ori + "/eyes.csv");
         country.setAdapter(countryAdapter);
         RetrieveCsvTask task3 = new RetrieveCsvTask();
         task3.setSpinner(race);
-        task3.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/us/race.csv");
+        task3.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/" + MainActivity.ori + "/race.csv");
         RetrieveCsvTask task4 = new RetrieveCsvTask();
         task4.setSpinner(sex);
-        task4.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/us/sex.csv");
+        task4.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/" + MainActivity.ori + "/sex.csv");
         ethnicity.setAdapter(ethnicityAdapter);
         RetrieveCsvTask task6 = new RetrieveCsvTask();
         task6.setSpinner(residence);
-        task6.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/us/res.csv");
+        task6.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/" + MainActivity.ori + "/res.csv");
         RetrieveCsvTask task5 = new RetrieveCsvTask();
         task5.setSpinner(dlStateSpinner);
-        task5.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/us/state.csv");
+        task5.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/" + MainActivity.ori + "/state.csv");
 
 
         if (!MainActivity.firstName.equals("")) {

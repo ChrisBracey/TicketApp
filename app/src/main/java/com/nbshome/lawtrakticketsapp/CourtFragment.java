@@ -2,12 +2,23 @@ package com.nbshome.lawtrakticketsapp;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import au.com.bytecode.opencsv.CSVReader;
 
 
 /**
@@ -38,6 +49,11 @@ public class CourtFragment extends Fragment implements View.OnClickListener {
         // Required empty public constructor
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -56,18 +72,24 @@ public class CourtFragment extends Fragment implements View.OnClickListener {
         return fragment;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+
+        View v         = inflater.inflate(R.layout.fragment_court, container, false);
+        courtDate = (EditText) v.findViewById(R.id.courtDate);
+        courtTime = (EditText) v.findViewById(R.id.courtTime);
+        courtType = (EditText) v.findViewById(R.id.courtType);
+        trialOffId = (EditText) v.findViewById(R.id.trialOffId);
+        trialOffName = (EditText) v.findViewById(R.id.trialOffName);
+        judgeId = (EditText) v.findViewById(R.id.judgeID);
+        judgeName = (EditText) v.findViewById(R.id.judgeName);
+
+        RetrieveCsvTask task = new RetrieveCsvTask();
+        task.setThings(judgeName, judgeId, courtType);
+        task.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/"+ MainActivity.ori + "/myagency.csv");
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_court, container, false);
     }
@@ -119,4 +141,69 @@ public class CourtFragment extends Fragment implements View.OnClickListener {
         }
 
     }
+
+
+    String cName, jID, jName;
+
+    class RetrieveCsvTask extends AsyncTask<String, Void, List<String[]>> {
+        private Exception exception;
+        EditText judgeName, judgeId, courtType;
+
+        public void setThings(EditText judgeName, EditText judgeId, EditText courtType) {
+            this.judgeName = judgeName;
+            this.judgeId = judgeId;
+            this.courtType = courtType;
+        }
+
+        @Override
+        protected List<String[]> doInBackground(String... urlStr) {
+
+            String[] next = {};
+            List<String[]> list = new ArrayList<String[]>();
+            try {
+                URL url = new URL(urlStr[0]);
+                BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+                CSVReader reader = new CSVReader(in);
+                for(;;)
+                {
+                    next = reader.readNext();
+                    if(next!= null) {
+                        list.add(next);
+                    }
+                    else {
+                        break;
+                    }
+                }
+
+                return list;
+            } catch (Exception ex)
+            {
+                this.exception = ex;
+                return null;
+            }
+        }
+
+        protected void onPostExecute(List<String[]> list)
+        {
+            ArrayList stuff = new ArrayList();
+            try {
+                jName = list.get(1)[list.get(1).length - 4];
+                jID = list.get(1)[list.get(1).length - 5];
+                cName = list.get(1)[list.get(1).length - 12];
+                judgeName = (EditText) getActivity().findViewById(R.id.judgeName);
+                judgeId = (EditText) getActivity().findViewById(R.id.judgeID);
+                courtType = (EditText) getActivity().findViewById(R.id.courtType);
+                
+
+                judgeName.setText(jName);
+                judgeId.setText(jID);
+                courtType.setText(cName);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+        }
+    }
+
+
 }

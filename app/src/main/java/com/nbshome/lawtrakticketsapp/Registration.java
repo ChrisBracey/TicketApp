@@ -132,11 +132,11 @@ public class Registration extends Fragment implements View.OnClickListener{
         //ownerState.setAdapter(adapter);
         RetrieveCsvTask task2 = new RetrieveCsvTask();
         task2.setSpinner(ownerState);
-        task2.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/us/state.csv");
+        task2.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/" + MainActivity.ori + "/state.csv");
         //plateState.setAdapter(adapter);
         RetrieveCsvTask task3 = new RetrieveCsvTask();
         task3.setSpinner(plateState);
-        task3.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/us/state.csv");
+        task3.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/" + MainActivity.ori + "/state.csv");
 
         if (!MainActivity.regFullName.equals("")) {
 
@@ -246,7 +246,7 @@ public class Registration extends Fragment implements View.OnClickListener{
             }
 
             try {
-                State temp = (State) ownerState.getSelectedItem();
+                String temp = ownerState.getSelectedItem().toString();
             } catch(Exception ex)
             {
                 Context context = getContext();
@@ -292,7 +292,7 @@ public class Registration extends Fragment implements View.OnClickListener{
             }
 
             try {
-                State temp = (State) plateState.getSelectedItem();
+                String temp = plateState.getSelectedItem().toString();
             } catch(Exception ex)
             {
                 Context context = getContext();
@@ -324,7 +324,7 @@ public class Registration extends Fragment implements View.OnClickListener{
 
                 owner.setVehicle(new Vehicle(vehicleMake.getSelectedItem().toString(),
                         vehicleYear.getText().toString(), plateNum.getText().toString(),
-                        (State) plateState.getSelectedItem(), (VehicleType) vehType.getSelectedItem()));
+                        plateState.getSelectedItem().toString(), (VehicleType) vehType.getSelectedItem()));
 
                 MainActivity.violators.get(MainActivity.violators.size() - 1).getTickets().get
                         (MainActivity.violators.get(MainActivity.violators.size() - 1).getTickets().size() - 1).setOwner(owner);

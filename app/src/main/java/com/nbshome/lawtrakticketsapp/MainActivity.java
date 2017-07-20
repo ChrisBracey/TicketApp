@@ -1,15 +1,14 @@
 package com.nbshome.lawtrakticketsapp;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.text.InputFilter;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -20,11 +19,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -52,6 +49,8 @@ public class MainActivity extends AppCompatActivity
 
     private static final int RC_BARCODE_CAPTURE = 9001;
     private static final String TAG = "BarcodeMain";
+    private static final String CONFIG = "Config";
+    public boolean flag = false;
 
     public static String output, parsedOutput;
 
@@ -67,18 +66,33 @@ public class MainActivity extends AppCompatActivity
             findViewById(R.id.read_barcode).setOnClickListener(this);
             findViewById(R.id.skip).setOnClickListener(this);
             findViewById(R.id.submitToken).setOnClickListener(this);
-
+            findViewById(R.id.changeOri).setOnClickListener(this);
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                     this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
             drawer.setDrawerListener(toggle);
             toggle.syncState();
-            RetrieveCsvTask task = new RetrieveCsvTask();
-            task.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/us/myagency.csv");
-
             NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
             navigationView.setNavigationItemSelectedListener(this);
+            SharedPreferences settings = getSharedPreferences(CONFIG, 0);
+            ori = settings.getString("ORI", "");
+            Log.d(TAG, ori);
+            if(ori.equals(""))
+            {
+                EditText text = (EditText) findViewById(R.id.token);
+                text.setHint("ORI");
 
+                text.setFilters(new InputFilter[] {
+                        new InputFilter.LengthFilter(9)
+                });
+                flag = true;
+            } else {
+                EditText text = (EditText) findViewById(R.id.token);
+                text.setHint("Token");
+                RetrieveCsvTask task = new RetrieveCsvTask();
+                task.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/"+ ori + "/myagency.csv");
+                findViewById(R.id.changeOri).setVisibility(View.VISIBLE);
+            }
 
         } catch(Exception e)
         {
@@ -86,6 +100,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
     boolean skipLic = false, skipReg = false;
+    public static String ori;
 
 
     @Override
@@ -138,7 +153,42 @@ public class MainActivity extends AppCompatActivity
         } else if(v.getId() == R.id.submitToken)
         {
             EditText token = (EditText) findViewById(R.id.token);
-            if(token.getText().toString().equals(this.token))
+            if(flag)
+            {
+                if(!token.getText().toString().equals("")) {
+                    SharedPreferences settings = getSharedPreferences(CONFIG, 0);
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.putString("ORI", token.getText().toString());
+                    editor.commit();
+                    ori = settings.getString("ORI", "");
+                    try {
+                        RetrieveCsvTask task = new RetrieveCsvTask();
+                        task.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/" + ori + "/myagency.csv");
+                        token.setFilters(new InputFilter[] {
+                                new InputFilter.LengthFilter(6)
+                        });
+
+                    } catch (Exception ex)
+                    {
+
+                        editor.putString("ORI", "");
+                        editor.commit();
+                        CharSequence err = "Please Enter a valid ORI";
+                        int duration     = Toast.LENGTH_SHORT;
+
+                        Toast toast      = Toast.makeText(this, err, duration);
+                        toast.show();
+                        flag = true;
+                    }
+
+                    TextInputLayout err = (TextInputLayout) findViewById(R.id.tokenTextLayout);
+                    err.setError("");
+                } else {
+                    TextInputLayout err = (TextInputLayout) findViewById(R.id.tokenTextLayout);
+                    err.setError("You must enter an ORI");
+                }
+            }
+             else if(token.getText().toString().equals(this.token))
             {
                 Button btn = (Button) findViewById(R.id.read_barcode);
                 Button btn2 = (Button) findViewById(R.id.skip);
@@ -151,6 +201,17 @@ public class MainActivity extends AppCompatActivity
                 TextInputLayout err = (TextInputLayout) findViewById(R.id.tokenTextLayout);
                 err.setError("Wrong Token Value. Please Try again.");
             }
+        } else if(v.getId() == R.id.changeOri) {
+            EditText text = (EditText) findViewById(R.id.token);
+            text.setHint("ORI");
+            SharedPreferences settings = getSharedPreferences(CONFIG, 0);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString("ORI", "");
+            editor.commit();
+            text.setFilters(new InputFilter[] {
+                    new InputFilter.LengthFilter(9)
+            });
+            flag = true;
         }
 
 
@@ -558,8 +619,22 @@ public class MainActivity extends AppCompatActivity
 
         protected void onPostExecute(List<String[]> list)
         {
-            ArrayList stuff = new ArrayList();
-            token = list.get(1)[list.get(1).length-1];
+                ArrayList stuff = new ArrayList();
+            try {
+                token = list.get(1)[list.get(1).length - 1];
+                flag = false;
+                EditText token = (EditText) findViewById(R.id.token);
+                token.setText("");
+                token.setHint("Token");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                CharSequence err = "Please Enter a valid ORI";
+                int duration     = Toast.LENGTH_SHORT;
+
+                Toast toast      = Toast.makeText(getApplicationContext(), err, duration);
+                toast.show();
+                flag = true;
+            }
 
         }
     }

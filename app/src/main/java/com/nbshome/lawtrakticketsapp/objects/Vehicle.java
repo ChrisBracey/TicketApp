@@ -9,13 +9,13 @@ public class Vehicle
     private String make;
     private String year;
     private String plateNum;
-    private State plateState;
+    private String plateState;
     private VehicleType type;
 
     public Vehicle() {
     }
 
-    public Vehicle(String make, String year, String plateNum, State plateState, VehicleType type) {
+    public Vehicle(String make, String year, String plateNum, String plateState, VehicleType type) {
         this.make = make;
         this.year = year;
         this.plateNum = plateNum;
@@ -47,11 +47,11 @@ public class Vehicle
         this.plateNum = plateNum;
     }
 
-    public State getPlateState() {
+    public String getPlateState() {
         return plateState;
     }
 
-    public void setPlateState(State plateState) {
+    public void setPlateState(String plateState) {
         this.plateState = plateState;
     }
 
