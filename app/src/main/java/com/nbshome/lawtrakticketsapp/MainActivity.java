@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener,
         PersonFragment.OnFragmentInteractionListener, MainContentFragment.OnFragmentInteractionListener,
         TicketFragment.OnFragmentInteractionListener, Registration.OnFragmentInteractionListener,
-        CourtFragment.OnFragmentInteractionListener{
+        CourtFragment.OnFragmentInteractionListener, Violation.OnFragmentInteractionListener{
 
     public static ArrayList<Person> violators = new ArrayList<>();
 

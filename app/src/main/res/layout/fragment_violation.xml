@@ -2,7 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_marginTop="20dp"
     tools:context="com.nbshome.lawtrakticketsapp.Violation">
 
@@ -12,8 +12,8 @@
         android:layout_marginTop="40dp">
 
         <ScrollView
-            android:layout_width="368dp"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginLeft="8dp"
@@ -27,7 +27,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="vertical">
 
                 <TextView
@@ -37,318 +37,16 @@
                     android:text="Violation"
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <EditText
-                        android:id="@+id/trafficCode"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:ems="10"
-                        android:hint="Traffic Code"
-                        android:inputType="number"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-                </android.support.design.widget.TextInputLayout>
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <EditText
-                        android:id="@+id/offenseDescription"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:hint="Offense Description"
-                        android:inputType="textPersonName"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        tools:layout_editor_absoluteY="147dp" />
-                </android.support.design.widget.TextInputLayout>
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <EditText
-                        android:id="@+id/lastName"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:hint="Last Name"
-                        android:inputType="textPersonName" />
-                </android.support.design.widget.TextInputLayout>
-
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <EditText
-                        android:id="@+id/addr"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:hint="Address"
-                        android:inputType="textPostalAddress" />
-                </android.support.design.widget.TextInputLayout>
-
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <EditText
-                        android:id="@+id/city"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:hint="City"
-                        android:inputType="textCapWords" />
-                </android.support.design.widget.TextInputLayout>
-
 
                 <fr.ganfra.materialspinner.MaterialSpinner
+                    android:id="@+id/trafficCode"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:ms_multiline="false"
+                    android:visibility="visible"
                     app:ms_enableErrorLabel="false"
-                    app:ms_hint="State"
-                    app:ms_floatingLabelText="State"
-                    android:id="@+id/state"/>
-
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <EditText
-                        android:id="@+id/zip"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:digits="0123456789-"
-                        android:ems="10"
-                        android:hint="ZIP"
-                        android:inputType="number" />
-                </android.support.design.widget.TextInputLayout>
-
-
-                <fr.ganfra.materialspinner.MaterialSpinner
-                    android:id="@+id/country"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:ms_multiline="false"
-                    app:ms_enableErrorLabel="false"
-                    app:ms_hint="Country"
-                    app:ms_floatingLabelText="Country" />
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <EditText
-                        android:id="@+id/phone"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:hint="Phone"
-                        android:inputType="phone" />
-                </android.support.design.widget.TextInputLayout>
-
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <EditText
-                        android:id="@+id/ssn"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:digits="0123456789-"
-                        android:ems="10"
-                        android:hint="SSN"
-                        android:inputType="number" />
-                </android.support.design.widget.TextInputLayout>
-
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <EditText
-                        android:id="@+id/dob"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:hint="Birth Date"
-                        android:inputType="date" />
-                </android.support.design.widget.TextInputLayout>
-
-
-                <fr.ganfra.materialspinner.MaterialSpinner
-                    android:id="@+id/race"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:ms_multiline="false"
-                    app:ms_enableErrorLabel="false"
-                    app:ms_hint="Race"
-                    app:ms_floatingLabelText="Race"/>
-
-                <fr.ganfra.materialspinner.MaterialSpinner
-                    android:id="@+id/sex"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:ms_multiline="false"
-                    app:ms_enableErrorLabel="false"
-                    app:ms_hint="Sex"
-                    app:ms_floatingLabelText="Sex" />
-
-                <fr.ganfra.materialspinner.MaterialSpinner
-                    android:id="@+id/ethnicity"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:ms_multiline="false"
-                    app:ms_enableErrorLabel="false"
-                    app:ms_hint="Ethnicity"
-                    app:ms_floatingLabelText="Ethnicity" />
-
-                <fr.ganfra.materialspinner.MaterialSpinner
-                    android:id="@+id/residence"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:ms_multiline="false"
-                    app:ms_enableErrorLabel="false"
-                    app:ms_hint="Residence"
-                    app:ms_floatingLabelText="Residence" />
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <EditText
-                        android:id="@+id/heightFeet"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:hint="Feet"
-                        android:inputType="number" />
-                </android.support.design.widget.TextInputLayout>
-
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <EditText
-                        android:id="@+id/heightIn"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:hint="Inches"
-                        android:inputType="number" />
-                </android.support.design.widget.TextInputLayout>
-
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <EditText
-                        android:id="@+id/weight"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:hint="weight"
-                        android:inputType="number" />
-                </android.support.design.widget.TextInputLayout>
-
-
-                <fr.ganfra.materialspinner.MaterialSpinner
-                    android:id="@+id/hair"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:ms_multiline="false"
-                    app:ms_enableErrorLabel="false"
-                    app:ms_hint="Hair Color"
-                    app:ms_floatingLabelText="Hair Color" />
-
-                <fr.ganfra.materialspinner.MaterialSpinner
-                    android:id="@+id/eyes"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:ms_multiline="false"
-                    app:ms_enableErrorLabel="false"
-                    app:ms_hint="Eye Color"
-                    app:ms_floatingLabelText="Eye Color" />
-
-                <TextView
-                    android:id="@+id/header2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Drivers License Information"
-                    android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
-
-                <fr.ganfra.materialspinner.MaterialSpinner
-                    android:id="@+id/dlStateSpinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:ms_multiline="false"
-                    app:ms_enableErrorLabel="false"
-                    app:ms_hint="Drivers License State"
-                    app:ms_floatingLabelText="Drivers License State" />
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <EditText
-                        android:id="@+id/dlNum"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:hint="Drivers License Number"
-                        android:inputType="number" />
-                </android.support.design.widget.TextInputLayout>
-
-                <fr.ganfra.materialspinner.MaterialSpinner
-                    android:id="@+id/dlClass"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:ms_multiline="false"
-                    app:ms_enableErrorLabel="false"
-                    app:ms_hint="Drivers License Class"
-                    app:ms_floatingLabelText="Drivers License Class" />
-
-                <RadioGroup
-                    android:id="@+id/cdlGroup"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:checkedButton="@+id/cdlNo"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/textView2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="CDL?" />
-
-                    <RadioButton
-                        android:id="@+id/cdlYes"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Yes" />
-
-                    <RadioButton
-                        android:id="@+id/cdlNo"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="No" />
-                </RadioGroup>
+                    app:ms_floatingLabelText="Traffic Code"
+                    app:ms_hint="Traffic Code"
+                    app:ms_multiline="false" />
 
                 <Button
                     android:id="@+id/submit"

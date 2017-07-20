@@ -331,7 +331,7 @@ public class Registration extends Fragment implements View.OnClickListener{
 
                 FragmentManager fragmentManager = getFragmentManager();
                 Fragment frag = null;
-                Class fragmentClass = CourtFragment.class;
+                Class fragmentClass = Violation.class;
 
                 try {
                     frag = (Fragment) fragmentClass.newInstance();
@@ -419,7 +419,9 @@ public class Registration extends Fragment implements View.OnClickListener{
 
             testAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_dropdown_item, stuff);
 
+            testAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spin.setAdapter(testAdapter);
+
             try {
                 if (spin.getId() == R.id.ownerState) {
                     Log.d("State", MainActivity.regState);

@@ -2,11 +2,25 @@ package com.nbshome.lawtrakticketsapp;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import au.com.bytecode.opencsv.CSVReader;
+import fr.ganfra.materialspinner.MaterialSpinner;
 
 
 /**
@@ -17,7 +31,7 @@ import android.view.ViewGroup;
  * Use the {@link Violation#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Violation extends Fragment {
+public class Violation extends Fragment implements View.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -59,11 +73,21 @@ public class Violation extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
+    Spinner tc;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
+        View v         = inflater.inflate(R.layout.fragment_violation, container, false);
+        Button submit  = (Button) v.findViewById(R.id.submit);
+        submit.setOnClickListener(this);
+        tc        = (MaterialSpinner) v.findViewById(R.id.trafficCode);
+        RetrieveCsvTask task = new RetrieveCsvTask();
+        task.setSpinner(tc);
+        task.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/" + MainActivity.ori + "/traffic.csv");
+
         return inflater.inflate(R.layout.fragment_violation, container, false);
     }
 
@@ -91,6 +115,13 @@ public class Violation extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public void onClick(View v) {
+        if(v.getId() == R.id.submit) {
+
+        }
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -104,5 +135,59 @@ public class Violation extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    ArrayAdapter<String> testAdapter;
+    ArrayList codes;
+
+    class RetrieveCsvTask extends AsyncTask<String, Void, List<String[]>> {
+        private Exception exception;
+        private Spinner spin;
+
+        public void setSpinner(Spinner spin)
+        {
+            this.spin = spin;
+        }
+
+        @Override
+        protected List<String[]> doInBackground(String... urlStr) {
+
+            String[] next = {};
+            List<String[]> list = new ArrayList<String[]>();
+            try {
+                URL url = new URL(urlStr[0]);
+                BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+                CSVReader reader = new CSVReader(in);
+                for(;;)
+                {
+                    next = reader.readNext();
+                    if(next!= null) {
+                        list.add(next);
+                    }
+                    else {
+                        break;
+                    }
+                }
+
+                return list;
+            } catch (Exception ex)
+            {
+                this.exception = ex;
+                return null;
+            }
+        }
+
+        protected void onPostExecute(List<String[]> list)
+        {
+            codes = new ArrayList();
+            for(int i = 1; i<list.size(); ++i)
+            {
+                String temp = list.get(i)[0] + " " + list.get(i)[1];
+                Log.d("Stuff", temp);
+                codes.add(temp);
+            }
+            spin.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, codes));
+
+        }
     }
 }
