@@ -23,7 +23,9 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintVertical_bias="1.0">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -46,16 +48,82 @@
                     app:ms_enableErrorLabel="false"
                     app:ms_floatingLabelText="Traffic Code"
                     app:ms_hint="Traffic Code"
-                    app:ms_multiline="false" />
+                    app:ms_multiline="true"/>
 
-                <Button
-                    android:id="@+id/submit"
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/descText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:visibility="gone">
+
+                    <EditText
+                        android:id="@+id/desc"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:ems="10"
+                        android:hint="Description"
+                        android:inputType="textPersonName"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/offText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
+                    <EditText
+                        android:id="@+id/off"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:ems="10"
+                        android:hint="Offense"
+                        android:inputType="none"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/pointsText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
+                    <EditText
+                        android:id="@+id/points"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:ems="10"
+                        android:hint="Points"
+                        android:inputType="none"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
+                </android.support.design.widget.TextInputLayout>
+
+                <Button
+                    android:id="@+id/submitViolation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
                     android:background="@color/colorPrimary"
                     android:elevation="2dp"
                     android:text="Submit"
                     android:textColor="#fff" />
+
+                <Button
+                    android:id="@+id/skipTC"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorPrimary"
+                    android:elevation="2dp"
+                    android:text="Skip"
+                    android:textColor="#fff"
+                    tools:layout_marginTop="5dp" />
 
             </LinearLayout>
         </ScrollView>

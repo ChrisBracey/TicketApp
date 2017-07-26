@@ -4,13 +4,16 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 
 import java.io.BufferedReader;
@@ -74,6 +77,10 @@ public class Violation extends Fragment implements View.OnClickListener {
         }
     }
     Spinner tc;
+    Button submit, skip;
+    TextInputLayout descLayout, offLayout, pointsLayout;
+    EditText descBox, offBox, pointsBox;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -81,14 +88,23 @@ public class Violation extends Fragment implements View.OnClickListener {
         // Inflate the layout for this fragment
 
         View v         = inflater.inflate(R.layout.fragment_violation, container, false);
-        Button submit  = (Button) v.findViewById(R.id.submit);
+        submit  = (Button) v.findViewById(R.id.submitViolation);
+        skip = (Button) v.findViewById(R.id.skipTC);
+        descLayout = (TextInputLayout) v.findViewById(R.id.descText);
+        descBox = (EditText) v.findViewById(R.id.desc);
+        offLayout = (TextInputLayout) v.findViewById(R.id.offText);
+        offBox = (EditText) v.findViewById(R.id.off);
+        pointsLayout = (TextInputLayout) v.findViewById(R.id.pointsText);
+        pointsBox = (EditText) v.findViewById(R.id.points);
+
+        skip.setOnClickListener(this);
         submit.setOnClickListener(this);
         tc        = (MaterialSpinner) v.findViewById(R.id.trafficCode);
         RetrieveCsvTask task = new RetrieveCsvTask();
         task.setSpinner(tc);
         task.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/" + MainActivity.ori + "/traffic.csv");
 
-        return inflater.inflate(R.layout.fragment_violation, container, false);
+        return v;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -117,7 +133,15 @@ public class Violation extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        if(v.getId() == R.id.submit) {
+        if(v.getId() == R.id.submitViolation) {
+            RetrieveCsvTask task = new RetrieveCsvTask();
+            Log.d("STUFF", tc.getSelectedItem().toString().substring(0,2));
+            task.setFlag(true, tc.getSelectedItem().toString().substring(0,2));
+            task.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/" + MainActivity.ori + "/traffic.csv");
+            skip.setVisibility(View.INVISIBLE);
+            descLayout.setVisibility(View.VISIBLE);
+            offLayout.setVisibility(View.VISIBLE);
+            pointsLayout.setVisibility(View.VISIBLE);
 
         }
     }
@@ -139,14 +163,20 @@ public class Violation extends Fragment implements View.OnClickListener {
 
     ArrayAdapter<String> testAdapter;
     ArrayList codes;
+    String desc;
 
     class RetrieveCsvTask extends AsyncTask<String, Void, List<String[]>> {
         private Exception exception;
         private Spinner spin;
-
+        private boolean flag = false;
+        private String code;
         public void setSpinner(Spinner spin)
         {
             this.spin = spin;
+        }
+        public void setFlag(boolean flag, String code) {
+            this.flag = flag;
+            this.code = code;
         }
 
         @Override
@@ -154,6 +184,7 @@ public class Violation extends Fragment implements View.OnClickListener {
 
             String[] next = {};
             List<String[]> list = new ArrayList<String[]>();
+
             try {
                 URL url = new URL(urlStr[0]);
                 BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
@@ -179,14 +210,26 @@ public class Violation extends Fragment implements View.OnClickListener {
 
         protected void onPostExecute(List<String[]> list)
         {
-            codes = new ArrayList();
-            for(int i = 1; i<list.size(); ++i)
-            {
-                String temp = list.get(i)[0] + " " + list.get(i)[1];
-                Log.d("Stuff", temp);
-                codes.add(temp);
+            if(!flag) {
+                codes = new ArrayList();
+                for (int i = 1; i < list.size(); ++i) {
+                    String temp = list.get(i)[0] + " " + list.get(i)[1];
+                    Log.d("Stuff", temp);
+                    codes.add(temp);
+                }
+                spin.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, codes));
+            } else {
+                for(int i =1; i<list.size(); ++i) {
+                    if(list.get(i)[0].equals(code)) {
+                        descBox.setText(list.get(i)[1]);
+                        offBox.setText(list.get(i)[2]);
+                        pointsBox.setText(list.get(i)[5]);
+                        offBox.setInputType(InputType.TYPE_NULL);
+                        pointsBox.setInputType(InputType.TYPE_NULL);
+                        break;
+                    }
+                }
             }
-            spin.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, codes));
 
         }
     }
