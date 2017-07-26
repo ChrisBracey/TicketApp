@@ -76,10 +76,10 @@ public class Violation extends Fragment implements View.OnClickListener {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
-    Spinner tc;
+    Spinner tc, cdrSpinner, statuteSpinner;
     Button submit, skip;
-    TextInputLayout descLayout, offLayout, pointsLayout;
-    EditText descBox, offBox, pointsBox;
+    TextInputLayout descLayout, offLayout, pointsLayout, cdrLayout;
+    EditText descBox, offBox, pointsBox, cdrBox;
 
 
     @Override
@@ -96,6 +96,10 @@ public class Violation extends Fragment implements View.OnClickListener {
         offBox = (EditText) v.findViewById(R.id.off);
         pointsLayout = (TextInputLayout) v.findViewById(R.id.pointsText);
         pointsBox = (EditText) v.findViewById(R.id.points);
+        cdrLayout = (TextInputLayout) v.findViewById(R.id.cdrText);
+        cdrBox = (EditText) v.findViewById(R.id.cdr);
+        cdrSpinner = (MaterialSpinner) v.findViewById(R.id.cdrCode);
+        statuteSpinner = (MaterialSpinner) v.findViewById(R.id.offenseCode);
 
         skip.setOnClickListener(this);
         submit.setOnClickListener(this);
@@ -131,18 +135,64 @@ public class Violation extends Fragment implements View.OnClickListener {
         mListener = null;
     }
 
+    boolean skippedTC = false, skippedCDR = false;
+
     @Override
     public void onClick(View v) {
         if(v.getId() == R.id.submitViolation) {
-            RetrieveCsvTask task = new RetrieveCsvTask();
-            Log.d("STUFF", tc.getSelectedItem().toString().substring(0,2));
-            task.setFlag(true, tc.getSelectedItem().toString().substring(0,2));
-            task.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/" + MainActivity.ori + "/traffic.csv");
-            skip.setVisibility(View.INVISIBLE);
-            descLayout.setVisibility(View.VISIBLE);
-            offLayout.setVisibility(View.VISIBLE);
-            pointsLayout.setVisibility(View.VISIBLE);
+            if(!skippedTC) {
+                RetrieveCsvTask task = new RetrieveCsvTask();
+                Log.d("STUFF", tc.getSelectedItem().toString().substring(0, 2));
+                task.setFlag(true, tc.getSelectedItem().toString().substring(0, 2));
+                task.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/" + MainActivity.ori + "/traffic.csv");
+                skip.setVisibility(View.INVISIBLE);
+                descLayout.setVisibility(View.VISIBLE);
+                offLayout.setVisibility(View.VISIBLE);
+                pointsLayout.setVisibility(View.VISIBLE);
+                cdrLayout.setVisibility(View.VISIBLE);
+            } else if(!skippedCDR) {
+                RetrieveCsvTask task = new RetrieveCsvTask();
+                task.setOtherFlag(true, cdrSpinner.getSelectedItem().toString().split(" ")[0]);
+                task.setSpinner(cdrSpinner);
+                task.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/" + MainActivity.ori + "/cdrs.csv");
+                skip.setVisibility(View.INVISIBLE);
+                descLayout.setVisibility(View.VISIBLE);
+                offLayout.setVisibility(View.VISIBLE);
+                pointsLayout.setVisibility(View.VISIBLE);
+                cdrLayout.setVisibility(View.VISIBLE);
+            } else {
+                RetrieveCsvTask task = new RetrieveCsvTask();
+                Log.d("MADEIT", "Made it");
+                task.setOtherOtherFlag(true, statuteSpinner.getSelectedItem().toString());
+                task.setSpinner(statuteSpinner);
+                task.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/" + MainActivity.ori + "/statutes.csv");
+                skip.setVisibility(View.INVISIBLE);
+                descLayout.setVisibility(View.VISIBLE);
+                offLayout.setVisibility(View.VISIBLE);
+                pointsLayout.setVisibility(View.VISIBLE);
+                cdrLayout.setVisibility(View.VISIBLE);
+            }
 
+        } else if(v.getId() == R.id.skipTC) {
+            if(skippedTC)
+            {
+                skippedCDR = true;
+                cdrSpinner.setVisibility(View.GONE);
+                statuteSpinner.setVisibility(View.VISIBLE);
+                RetrieveCsvTask task = new RetrieveCsvTask();
+                task.setOtherOtherFlag(true, "");
+                task.setSpinner(statuteSpinner);
+                task.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/" + MainActivity.ori + "/statutes.csv");
+
+            } else {
+                tc.setVisibility(View.GONE);
+                cdrSpinner.setVisibility(View.VISIBLE);
+                RetrieveCsvTask task = new RetrieveCsvTask();
+                task.setOtherFlag(true, "");
+                task.setSpinner(cdrSpinner);
+                task.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/" + MainActivity.ori + "/cdrs.csv");
+                skippedTC = true;
+            }
         }
     }
 
@@ -168,7 +218,7 @@ public class Violation extends Fragment implements View.OnClickListener {
     class RetrieveCsvTask extends AsyncTask<String, Void, List<String[]>> {
         private Exception exception;
         private Spinner spin;
-        private boolean flag = false;
+        private boolean flag = false, otherFlag = false, otherOtherFlag = false;
         private String code;
         public void setSpinner(Spinner spin)
         {
@@ -176,6 +226,18 @@ public class Violation extends Fragment implements View.OnClickListener {
         }
         public void setFlag(boolean flag, String code) {
             this.flag = flag;
+            this.code = code;
+        }
+
+        public void setOtherFlag(boolean otherFlag, String code)
+        {
+            this.otherFlag = otherFlag;
+            this.code = code;
+        }
+
+        public void setOtherOtherFlag(boolean otherOtherFlag, String code)
+        {
+            this.otherOtherFlag = otherOtherFlag;
             this.code = code;
         }
 
@@ -210,7 +272,7 @@ public class Violation extends Fragment implements View.OnClickListener {
 
         protected void onPostExecute(List<String[]> list)
         {
-            if(!flag) {
+            if(!flag && !otherFlag && !otherOtherFlag) {
                 codes = new ArrayList();
                 for (int i = 1; i < list.size(); ++i) {
                     String temp = list.get(i)[0] + " " + list.get(i)[1];
@@ -218,14 +280,60 @@ public class Violation extends Fragment implements View.OnClickListener {
                     codes.add(temp);
                 }
                 spin.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, codes));
-            } else {
+            } else if(flag){
                 for(int i =1; i<list.size(); ++i) {
                     if(list.get(i)[0].equals(code)) {
                         descBox.setText(list.get(i)[1]);
                         offBox.setText(list.get(i)[2]);
                         pointsBox.setText(list.get(i)[5]);
+                        cdrBox.setText(list.get(i)[3]);
                         offBox.setInputType(InputType.TYPE_NULL);
                         pointsBox.setInputType(InputType.TYPE_NULL);
+                        cdrBox.setInputType(InputType.TYPE_NULL);
+                        break;
+                    }
+                }
+            } else if(otherFlag && code.equals("")) {
+                codes = new ArrayList();
+                for(int i =1; i<list.size(); ++i) {
+                    String temp = list.get(i)[1] + " " + list.get(i)[2];
+
+                    codes.add(temp);
+                }
+                spin.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, codes));
+            } else if(otherFlag && !code.equals("")) {
+                for(int i =1; i<list.size(); ++i) {
+                    if(list.get(i)[1].equals(code)) {
+                        descBox.setText(list.get(i)[2]);
+                        offBox.setText(list.get(i)[0]);
+                        pointsBox.setText(list.get(i)[4]);
+                        cdrBox.setText(list.get(i)[1]);
+                        offBox.setInputType(InputType.TYPE_NULL);
+                        pointsBox.setInputType(InputType.TYPE_NULL);
+                        cdrBox.setInputType(InputType.TYPE_NULL);
+                        break;
+                    }
+                }
+            } else if(otherOtherFlag && code.equals("")) {
+                codes = new ArrayList();
+                for(int i =1; i<list.size(); ++i) {
+                    String temp = list.get(i)[0] + " " + list.get(i)[2];
+
+                    codes.add(temp);
+                }
+                spin.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, codes));
+
+            } else if(otherOtherFlag && !code.equals("")) {
+                for(int i =1; i<list.size(); ++i) {
+                    Log.d("STUFF", list.get(i)[0] + " " + list.get(i)[2] );
+                    if((list.get(i)[0] + " " + list.get(i)[2]).equals(code)) {
+                        descBox.setText(list.get(i)[2]);
+                        offBox.setText(list.get(i)[0]);
+                        pointsBox.setText(list.get(i)[4]);
+                        cdrBox.setText(list.get(i)[1]);
+                        offBox.setInputType(InputType.TYPE_NULL);
+                        pointsBox.setInputType(InputType.TYPE_NULL);
+                        cdrBox.setInputType(InputType.TYPE_NULL);
                         break;
                     }
                 }
