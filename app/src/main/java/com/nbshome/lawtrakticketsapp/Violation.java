@@ -16,6 +16,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import org.w3c.dom.Text;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -76,10 +78,10 @@ public class Violation extends Fragment implements View.OnClickListener {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
-    Spinner tc, cdrSpinner, statuteSpinner;
+    Spinner tc, cdrSpinner, statuteSpinner, date;
     Button submit, skip;
-    TextInputLayout descLayout, offLayout, pointsLayout, cdrLayout;
-    EditText descBox, offBox, pointsBox, cdrBox;
+    TextInputLayout descLayout, offLayout, pointsLayout, cdrLayout, fineLayout;
+    EditText descBox, offBox, pointsBox, cdrBox, fineBox;
 
 
     @Override
@@ -100,6 +102,9 @@ public class Violation extends Fragment implements View.OnClickListener {
         cdrBox = (EditText) v.findViewById(R.id.cdr);
         cdrSpinner = (MaterialSpinner) v.findViewById(R.id.cdrCode);
         statuteSpinner = (MaterialSpinner) v.findViewById(R.id.offenseCode);
+        fineLayout = (TextInputLayout) v.findViewById(R.id.fineText);
+        fineBox = (EditText) v.findViewById(R.id.fine);
+        date = (MaterialSpinner) v.findViewById(R.id.date);
 
         skip.setOnClickListener(this);
         submit.setOnClickListener(this);
@@ -107,6 +112,12 @@ public class Violation extends Fragment implements View.OnClickListener {
         RetrieveCsvTask task = new RetrieveCsvTask();
         task.setSpinner(tc);
         task.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/" + MainActivity.ori + "/traffic.csv");
+
+
+        RetrieveCsvTask task1 = new RetrieveCsvTask();
+        task1.setSpinner(date);
+        task1.isDate(true);
+        task1.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/" + MainActivity.ori + "/trialdatelist.csv");
 
         return v;
     }
@@ -135,42 +146,58 @@ public class Violation extends Fragment implements View.OnClickListener {
         mListener = null;
     }
 
-    boolean skippedTC = false, skippedCDR = false;
+    boolean skippedTC = false, skippedCDR = false, flag = false;
 
     @Override
     public void onClick(View v) {
         if(v.getId() == R.id.submitViolation) {
-            if(!skippedTC) {
-                RetrieveCsvTask task = new RetrieveCsvTask();
-                Log.d("STUFF", tc.getSelectedItem().toString().substring(0, 2));
-                task.setFlag(true, tc.getSelectedItem().toString().substring(0, 2));
-                task.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/" + MainActivity.ori + "/traffic.csv");
-                skip.setVisibility(View.INVISIBLE);
-                descLayout.setVisibility(View.VISIBLE);
-                offLayout.setVisibility(View.VISIBLE);
-                pointsLayout.setVisibility(View.VISIBLE);
-                cdrLayout.setVisibility(View.VISIBLE);
-            } else if(!skippedCDR) {
-                RetrieveCsvTask task = new RetrieveCsvTask();
-                task.setOtherFlag(true, cdrSpinner.getSelectedItem().toString().split(" ")[0]);
-                task.setSpinner(cdrSpinner);
-                task.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/" + MainActivity.ori + "/cdrs.csv");
-                skip.setVisibility(View.INVISIBLE);
-                descLayout.setVisibility(View.VISIBLE);
-                offLayout.setVisibility(View.VISIBLE);
-                pointsLayout.setVisibility(View.VISIBLE);
-                cdrLayout.setVisibility(View.VISIBLE);
+            if(flag) {
+                date.setVisibility(View.VISIBLE);
+                fineLayout.setVisibility(View.VISIBLE);
+                descLayout.setVisibility(View.GONE);
+                offLayout.setVisibility(View.GONE);
+                pointsLayout.setVisibility(View.GONE);
+                cdrLayout.setVisibility(View.GONE);
+                cdrSpinner.setVisibility(View.GONE);
+                statuteSpinner.setVisibility(View.GONE);
+                tc.setVisibility(View.GONE);
             } else {
-                RetrieveCsvTask task = new RetrieveCsvTask();
-                Log.d("MADEIT", "Made it");
-                task.setOtherOtherFlag(true, statuteSpinner.getSelectedItem().toString());
-                task.setSpinner(statuteSpinner);
-                task.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/" + MainActivity.ori + "/statutes.csv");
-                skip.setVisibility(View.INVISIBLE);
-                descLayout.setVisibility(View.VISIBLE);
-                offLayout.setVisibility(View.VISIBLE);
-                pointsLayout.setVisibility(View.VISIBLE);
-                cdrLayout.setVisibility(View.VISIBLE);
+                if (!skippedTC) {
+                    RetrieveCsvTask task = new RetrieveCsvTask();
+                    Log.d("STUFF", tc.getSelectedItem().toString().substring(0, 2));
+                    task.setFlag(true, tc.getSelectedItem().toString().substring(0, 2));
+                    task.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/" + MainActivity.ori + "/traffic.csv");
+                    skip.setVisibility(View.INVISIBLE);
+                    descLayout.setVisibility(View.VISIBLE);
+                    offLayout.setVisibility(View.VISIBLE);
+                    pointsLayout.setVisibility(View.VISIBLE);
+                    cdrLayout.setVisibility(View.VISIBLE);
+                    flag = true;
+                } else if (!skippedCDR) {
+                    RetrieveCsvTask task = new RetrieveCsvTask();
+                    task.setOtherFlag(true, cdrSpinner.getSelectedItem().toString().split(" ")[0]);
+                    task.setSpinner(cdrSpinner);
+                    task.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/" + MainActivity.ori + "/cdrs.csv");
+                    skip.setVisibility(View.INVISIBLE);
+                    descLayout.setVisibility(View.VISIBLE);
+                    offLayout.setVisibility(View.VISIBLE);
+                    pointsLayout.setVisibility(View.VISIBLE);
+                    cdrLayout.setVisibility(View.VISIBLE);
+                    
+                    flag = true;
+                } else {
+                    RetrieveCsvTask task = new RetrieveCsvTask();
+                    Log.d("MADEIT", "Made it");
+                    task.setOtherOtherFlag(true, statuteSpinner.getSelectedItem().toString());
+                    task.setSpinner(statuteSpinner);
+                    task.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/" + MainActivity.ori + "/statutes.csv");
+                    skip.setVisibility(View.INVISIBLE);
+                    descLayout.setVisibility(View.VISIBLE);
+                    offLayout.setVisibility(View.VISIBLE);
+                    pointsLayout.setVisibility(View.VISIBLE);
+                    cdrLayout.setVisibility(View.VISIBLE);
+                    flag = true;
+                }
             }
 
         } else if(v.getId() == R.id.skipTC) {
@@ -218,7 +245,7 @@ public class Violation extends Fragment implements View.OnClickListener {
     class RetrieveCsvTask extends AsyncTask<String, Void, List<String[]>> {
         private Exception exception;
         private Spinner spin;
-        private boolean flag = false, otherFlag = false, otherOtherFlag = false;
+        private boolean flag = false, otherFlag = false, otherOtherFlag = false, date = false;
         private String code;
         public void setSpinner(Spinner spin)
         {
@@ -239,6 +266,10 @@ public class Violation extends Fragment implements View.OnClickListener {
         {
             this.otherOtherFlag = otherOtherFlag;
             this.code = code;
+        }
+
+        public void isDate(boolean date) {
+            this.date = date;
         }
 
         @Override
@@ -272,69 +303,82 @@ public class Violation extends Fragment implements View.OnClickListener {
 
         protected void onPostExecute(List<String[]> list)
         {
-            if(!flag && !otherFlag && !otherOtherFlag) {
-                codes = new ArrayList();
-                for (int i = 1; i < list.size(); ++i) {
-                    String temp = list.get(i)[0] + " " + list.get(i)[1];
-                    Log.d("Stuff", temp);
-                    codes.add(temp);
+            if(date)
+            {
+                ArrayList dates = new ArrayList();
+                for(int i = 1; i<list.size(); ++i)
+                {
+                    dates.add(list.get(i)[0]);
                 }
-                spin.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, codes));
-            } else if(flag){
-                for(int i =1; i<list.size(); ++i) {
-                    if(list.get(i)[0].equals(code)) {
-                        descBox.setText(list.get(i)[1]);
-                        offBox.setText(list.get(i)[2]);
-                        pointsBox.setText(list.get(i)[5]);
-                        cdrBox.setText(list.get(i)[3]);
-                        offBox.setInputType(InputType.TYPE_NULL);
-                        pointsBox.setInputType(InputType.TYPE_NULL);
-                        cdrBox.setInputType(InputType.TYPE_NULL);
-                        break;
+
+                spin.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, dates));
+            }
+            else {
+                if (!flag && !otherFlag && !otherOtherFlag) {
+                    codes = new ArrayList();
+                    for (int i = 1; i < list.size(); ++i) {
+                        String temp = list.get(i)[0] + " " + list.get(i)[1];
+                        Log.d("Stuff", temp);
+                        codes.add(temp);
                     }
-                }
-            } else if(otherFlag && code.equals("")) {
-                codes = new ArrayList();
-                for(int i =1; i<list.size(); ++i) {
-                    String temp = list.get(i)[1] + " " + list.get(i)[2];
-
-                    codes.add(temp);
-                }
-                spin.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, codes));
-            } else if(otherFlag && !code.equals("")) {
-                for(int i =1; i<list.size(); ++i) {
-                    if(list.get(i)[1].equals(code)) {
-                        descBox.setText(list.get(i)[2]);
-                        offBox.setText(list.get(i)[0]);
-                        pointsBox.setText(list.get(i)[4]);
-                        cdrBox.setText(list.get(i)[1]);
-                        offBox.setInputType(InputType.TYPE_NULL);
-                        pointsBox.setInputType(InputType.TYPE_NULL);
-                        cdrBox.setInputType(InputType.TYPE_NULL);
-                        break;
+                    spin.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, codes));
+                } else if (flag) {
+                    for (int i = 1; i < list.size(); ++i) {
+                        if (list.get(i)[0].equals(code)) {
+                            descBox.setText(list.get(i)[1]);
+                            offBox.setText(list.get(i)[2]);
+                            pointsBox.setText(list.get(i)[5]);
+                            cdrBox.setText(list.get(i)[3]);
+                            offBox.setInputType(InputType.TYPE_NULL);
+                            pointsBox.setInputType(InputType.TYPE_NULL);
+                            cdrBox.setInputType(InputType.TYPE_NULL);
+                            break;
+                        }
                     }
-                }
-            } else if(otherOtherFlag && code.equals("")) {
-                codes = new ArrayList();
-                for(int i =1; i<list.size(); ++i) {
-                    String temp = list.get(i)[0] + " " + list.get(i)[2];
+                } else if (otherFlag && code.equals("")) {
+                    codes = new ArrayList();
+                    for (int i = 1; i < list.size(); ++i) {
+                        String temp = list.get(i)[1] + " " + list.get(i)[2];
 
-                    codes.add(temp);
-                }
-                spin.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, codes));
+                        codes.add(temp);
+                    }
+                    spin.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, codes));
+                } else if (otherFlag && !code.equals("")) {
+                    for (int i = 1; i < list.size(); ++i) {
+                        if (list.get(i)[1].equals(code)) {
+                            descBox.setText(list.get(i)[2]);
+                            offBox.setText(list.get(i)[0]);
+                            pointsBox.setText(list.get(i)[4]);
+                            cdrBox.setText(list.get(i)[1]);
+                            offBox.setInputType(InputType.TYPE_NULL);
+                            pointsBox.setInputType(InputType.TYPE_NULL);
+                            cdrBox.setInputType(InputType.TYPE_NULL);
 
-            } else if(otherOtherFlag && !code.equals("")) {
-                for(int i =1; i<list.size(); ++i) {
-                    Log.d("STUFF", list.get(i)[0] + " " + list.get(i)[2] );
-                    if((list.get(i)[0] + " " + list.get(i)[2]).equals(code)) {
-                        descBox.setText(list.get(i)[2]);
-                        offBox.setText(list.get(i)[0]);
-                        pointsBox.setText(list.get(i)[4]);
-                        cdrBox.setText(list.get(i)[1]);
-                        offBox.setInputType(InputType.TYPE_NULL);
-                        pointsBox.setInputType(InputType.TYPE_NULL);
-                        cdrBox.setInputType(InputType.TYPE_NULL);
-                        break;
+                            break;
+                        }
+                    }
+                } else if (otherOtherFlag && code.equals("")) {
+                    codes = new ArrayList();
+                    for (int i = 1; i < list.size(); ++i) {
+                        String temp = list.get(i)[0] + " " + list.get(i)[2];
+
+                        codes.add(temp);
+                    }
+                    spin.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, codes));
+
+                } else if (otherOtherFlag && !code.equals("")) {
+                    for (int i = 1; i < list.size(); ++i) {
+                        Log.d("STUFF", list.get(i)[0] + " " + list.get(i)[2]);
+                        if ((list.get(i)[0] + " " + list.get(i)[2]).equals(code)) {
+                            descBox.setText(list.get(i)[2]);
+                            offBox.setText(list.get(i)[0]);
+                            pointsBox.setText(list.get(i)[4]);
+                            cdrBox.setText(list.get(i)[1]);
+                            offBox.setInputType(InputType.TYPE_NULL);
+                            pointsBox.setInputType(InputType.TYPE_NULL);
+                            cdrBox.setInputType(InputType.TYPE_NULL);
+                            break;
+                        }
                     }
                 }
             }
