@@ -178,12 +178,13 @@ public class Violation extends Fragment implements View.OnClickListener {
                     task.setOtherFlag(true, cdrSpinner.getSelectedItem().toString().split(" ")[0]);
                     task.setSpinner(cdrSpinner);
                     task.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/" + MainActivity.ori + "/cdrs.csv");
+
                     skip.setVisibility(View.INVISIBLE);
                     descLayout.setVisibility(View.VISIBLE);
                     offLayout.setVisibility(View.VISIBLE);
                     pointsLayout.setVisibility(View.VISIBLE);
                     cdrLayout.setVisibility(View.VISIBLE);
-                    
+
                     flag = true;
                 } else {
                     RetrieveCsvTask task = new RetrieveCsvTask();

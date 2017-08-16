@@ -1,13 +1,17 @@
 package com.nbshome.lawtrakticketsapp;
 
+import android.app.ActionBar;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.widget.CardView;
 import android.text.InputFilter;
 import android.util.Log;
 import android.view.View;
@@ -19,14 +23,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
+import com.google.android.gms.vision.text.Line;
 import com.nbshome.lawtrakticketsapp.barcode.BarcodeCaptureActivity;
+import com.nbshome.lawtrakticketsapp.enums.Country;
+import com.nbshome.lawtrakticketsapp.enums.Ethnicity;
 import com.nbshome.lawtrakticketsapp.objects.Person;
+import com.nbshome.lawtrakticketsapp.objects.Ticket;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -53,11 +65,23 @@ public class MainActivity extends AppCompatActivity
     public boolean flag = false;
 
     public static String output, parsedOutput;
+    public static ArrayList<Person> people;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         try {
             super.onCreate(savedInstanceState);
+            Person person1 = new Person("John", "", "Doe", "", "123 streetname", "Florence", "29505", "123456789", "d", "12/16/1994", "600", "200",
+                                        "SC", "SC", "BLK", "BRO", "M", false, "W", Country.US, "1234567890", "123121234", Ethnicity.N, "S", new ArrayList<Ticket>());
+            Person person2 = new Person("Billy", "", "Bob", "", "123 streetname", "Florence", "29505", "123456789", "d", "12/16/1994", "600", "200",
+                    "SC", "SC", "BLK", "BRO", "M", false, "W", Country.US, "1234567890", "123121234", Ethnicity.N, "S", new ArrayList<Ticket>());
+            Person person3 = new Person("Jane", "", "Doe", "", "123 streetname", "Florence", "29505", "123456789", "d", "12/16/1994", "600", "200",
+                    "SC", "SC", "BLK", "BRO", "M", false, "W", Country.US, "1234567890", "123121234", Ethnicity.N, "S", new ArrayList<Ticket>());
+
+            people = new ArrayList<Person>();
+            people.add(person1);
+            people.add(person2);
+            people.add(person3);
 
             setTitle("New Ticket");
             setContentView(R.layout.activity_main);
@@ -67,6 +91,9 @@ public class MainActivity extends AppCompatActivity
             findViewById(R.id.skip).setOnClickListener(this);
             findViewById(R.id.submitToken).setOnClickListener(this);
             findViewById(R.id.changeOri).setOnClickListener(this);
+            findViewById(R.id.createNew).setOnClickListener(this);
+
+
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                     this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -192,11 +219,43 @@ public class MainActivity extends AppCompatActivity
             {
                 Button btn = (Button) findViewById(R.id.read_barcode);
                 Button btn2 = (Button) findViewById(R.id.skip);
-                btn.setEnabled(true);
-                btn2.setEnabled(true);
-                findViewById(R.id.submitToken).setEnabled(false);
-                findViewById(R.id.token).setEnabled(false);
-                findViewById(R.id.tokenLayout).setVisibility(View.INVISIBLE);
+                btn.setEnabled(false);
+                btn2.setEnabled(false);
+
+                for(int i = 0; i<people.size(); ++i)
+                {
+                    CardView card = new CardView(getApplicationContext());
+                    CardView.LayoutParams params = new CardView.LayoutParams(
+                            CardView.LayoutParams.MATCH_PARENT,
+                            CardView.LayoutParams.WRAP_CONTENT
+                    );
+                    final float scale = getResources().getDisplayMetrics().density;
+
+                    params.setMargins(8,8,8,8);
+                    params.height = (int) (200 * scale);
+                    card.setLayoutParams(params);
+                    card.setRadius((int) (10 * scale));
+                    card.setCardBackgroundColor(Color.parseColor("#33b5e5"));
+                    card.setElevation((int) (4 * scale ));
+                    TextView tv = new TextView(getApplicationContext());
+                    tv.setLayoutParams(params);
+                    tv.setText(people.get(i).getfName() + " " + people.get(i).getlName());
+                    tv.setTextAppearance(R.style.TextAppearance_AppCompat_Headline);
+                    tv.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                    tv.setTextColor(Color.WHITE);
+                    card.addView(tv);
+                    LinearLayout cards = (LinearLayout) findViewById(R.id.cards);
+                    cards.addView(card, 0);
+                }
+
+                findViewById(R.id.submitToken).setVisibility(View.GONE);
+                findViewById(R.id.tokenTextLayout).setVisibility(View.GONE);
+                findViewById(R.id.createNew).setVisibility(View.VISIBLE);
+                findViewById(R.id.changeOri).setVisibility(View.GONE);
+
+                InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                //findViewById(R.id.tokenLayout).setVisibility(View.INVISIBLE);
             } else {
                 TextInputLayout err = (TextInputLayout) findViewById(R.id.tokenTextLayout);
                 err.setError("Wrong Token Value. Please Try again.");
@@ -212,6 +271,12 @@ public class MainActivity extends AppCompatActivity
                     new InputFilter.LengthFilter(9)
             });
             flag = true;
+        } else if(v.getId() == R.id.createNew) {
+            Button btn = (Button) findViewById(R.id.read_barcode);
+            Button btn2 = (Button) findViewById(R.id.skip);
+            btn.setEnabled(true);
+            btn2.setEnabled(true);
+            findViewById(R.id.tokenLayout).setVisibility(View.INVISIBLE);
         }
 
 
@@ -398,6 +463,7 @@ public class MainActivity extends AppCompatActivity
                         if(!temp && !skipLic) {
                             if (line.contains("DBC1")) {
                                 sex = "M";
+
                                 temp = true;
                             } else {
                                 sex = "F";
@@ -406,6 +472,7 @@ public class MainActivity extends AppCompatActivity
                         if(line.contains("DAJ"))
                         {
                             state = line.substring(3).trim();
+
                         }
                         if(!skipLic || scan.hasNextLine()) {
                             //region License Stuff
