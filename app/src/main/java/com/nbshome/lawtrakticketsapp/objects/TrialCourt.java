@@ -14,7 +14,7 @@ public class TrialCourt
     private String courtZip;
     private String courtDate;
     private String courtTime;
-    private State courtState;
+    private String courtState;
 
 
 
@@ -22,7 +22,7 @@ public class TrialCourt
     }
 
     public TrialCourt(String court, String courtAddr, String courtCity, String courtZip,
-                      String courtDate, String courtTime, State courtState)
+                      String courtDate, String courtTime, String courtState)
     {
         this.court = court;
         this.courtAddr = courtAddr;
@@ -82,11 +82,11 @@ public class TrialCourt
         this.courtTime = courtTime;
     }
 
-    public State getCourtState() {
+    public String getCourtState() {
         return courtState;
     }
 
-    public void setCourtState(State courtState) {
+    public void setCourtState(String courtState) {
         this.courtState = courtState;
     }
 }

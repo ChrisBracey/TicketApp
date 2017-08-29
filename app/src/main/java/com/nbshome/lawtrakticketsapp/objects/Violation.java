@@ -3,7 +3,9 @@ package com.nbshome.lawtrakticketsapp.objects;
 
 import com.nbshome.lawtrakticketsapp.enums.RoadType;
 
-public class Violation
+import java.io.Serializable;
+
+public class Violation implements Serializable
 {
     private String violationSectionNo;
     private String violation;
@@ -14,12 +16,21 @@ public class Violation
     private String BALevel;
     private String vioLocation;
     private String zone;
-    private RoadType roadType;
+    private String roadType;
+    private String roadNum;
+
+
     private String county;
     private String vioLat;
     private String vioLong;
     private String violationCity;
     private boolean courtAppearance;
+
+    private boolean resultOfAcc;
+    private boolean insuranceVer;
+
+
+    private boolean vehSearched;
 
 
     public Violation() {
@@ -43,7 +54,37 @@ public class Violation
         this.violationCity = violationCity;
         this.courtAppearance = courtAppearance;
     }
+    public boolean isResultOfAcc() {
+        return resultOfAcc;
+    }
 
+    public void setResultOfAcc(boolean resultOfAcc) {
+        this.resultOfAcc = resultOfAcc;
+    }
+
+    public boolean isInsuranceVer() {
+        return insuranceVer;
+    }
+
+    public void setInsuranceVer(boolean insuranceVer) {
+        this.insuranceVer = insuranceVer;
+    }
+
+
+    public boolean isVehSearched() {
+        return vehSearched;
+    }
+
+    public void setVehSearched(boolean vehSearched) {
+        this.vehSearched = vehSearched;
+    }
+    public String getRoadNum() {
+        return roadNum;
+    }
+
+    public void setRoadNum(String roadNum) {
+        this.roadNum = roadNum;
+    }
     public String getVioLocation() {
         return vioLocation;
     }
@@ -60,11 +101,11 @@ public class Violation
         this.zone = zone;
     }
 
-    public RoadType getRoadType() {
+    public String getRoadType() {
         return roadType;
     }
 
-    public void setRoadType(RoadType roadType) {
+    public void setRoadType(String roadType) {
         this.roadType = roadType;
     }
 

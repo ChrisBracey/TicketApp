@@ -50,11 +50,7 @@ public class TicketFragment extends Fragment implements View.OnClickListener{
     private String mParam1;
     private String mParam2;
 
-    private EditText fName, mName, lName, addr, city, zip, phone, ssn, dob,
-            feet, inches, weight, dlNum;
-    private MaterialSpinner state;
-    private Spinner dlStateSpinner, race, sex, ethnicity, residence, country, hair, eyes, dlClass;
-    private RadioGroup cdl;
+
     private OnFragmentInteractionListener mListener;
 
     ArrayAdapter<String> testAdapter;
@@ -222,6 +218,12 @@ public class TicketFragment extends Fragment implements View.OnClickListener{
         super.onDetach();
         mListener = null;
     }
+
+    private EditText fName, mName, lName, addr, city, zip, phone, ssn, dob,
+            feet, inches, weight, dlNum;
+    private MaterialSpinner state;
+    private Spinner dlStateSpinner, race, sex, ethnicity, residence, country, hair, eyes, dlClass;
+    private RadioGroup cdl;
 
     @Override
     public void onClick(View v)
@@ -515,10 +517,10 @@ public class TicketFragment extends Fragment implements View.OnClickListener{
             ArrayList stuff = new ArrayList();
             for(int i = 1; i<list.size(); ++i)
             {
-                if(spin.getId() != R.id.race && spin.getId() != R.id.residence)
+                //if(spin.getId() != R.id.race && spin.getId() != R.id.residence)
                     stuff.add(list.get(i)[0]);
-                else
-                    stuff.add(list.get(i)[1]);
+                //else
+                   // stuff.add(list.get(i)[1]);
             }
 
             testAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_dropdown_item, stuff);

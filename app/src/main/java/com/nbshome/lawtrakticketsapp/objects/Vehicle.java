@@ -3,19 +3,21 @@ package com.nbshome.lawtrakticketsapp.objects;
 import com.nbshome.lawtrakticketsapp.enums.State;
 import com.nbshome.lawtrakticketsapp.enums.VehicleType;
 
+import java.io.Serializable;
 
-public class Vehicle
+
+public class Vehicle implements Serializable
 {
     private String make;
     private String year;
     private String plateNum;
     private String plateState;
-    private VehicleType type;
+    private String type;
 
     public Vehicle() {
     }
 
-    public Vehicle(String make, String year, String plateNum, String plateState, VehicleType type) {
+    public Vehicle(String make, String year, String plateNum, String plateState, String type) {
         this.make = make;
         this.year = year;
         this.plateNum = plateNum;
@@ -55,11 +57,11 @@ public class Vehicle
         this.plateState = plateState;
     }
 
-    public VehicleType getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(VehicleType type) {
+    public void setType(String type) {
         this.type = type;
     }
 }

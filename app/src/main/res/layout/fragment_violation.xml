@@ -144,13 +144,46 @@
                         app:layout_constraintTop_toTopOf="parent"/>
                 </android.support.design.widget.TextInputLayout>
 
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/baLevelText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
+                    <EditText
+                        android:id="@+id/baLevel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:ems="10"
+                        android:hint="B.A. Level"
+                        android:inputType="none"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
+                </android.support.design.widget.TextInputLayout>
+
+                <CheckBox
+                    android:id="@+id/baRefused"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="B.A. Test Refused"
+                    android:visibility="gone"/>
+                <CheckBox
+                    android:id="@+id/ba0"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="B.A. was 0.0 or not Alcohol"
+                    android:visibility="gone"/>
+
+
                 <fr.ganfra.materialspinner.MaterialSpinner
                     android:id="@+id/date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="gone"
                     app:ms_enableErrorLabel="false"
-                    app:ms_floatingLabelText="Statute"
+                    app:ms_floatingLabelText="Date"
                     app:ms_hint="Date"
                     app:ms_multiline="true"/>
 
@@ -172,6 +205,163 @@
                         app:layout_constraintTop_toTopOf="parent"/>
                 </android.support.design.widget.TextInputLayout>
 
+
+                <TextView
+                    android:id="@+id/locHeader"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Location"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                    android:visibility="gone"/>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/locText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
+                    <EditText
+                        android:id="@+id/loc"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:ems="10"
+                        android:hint="Location"
+                        android:inputType="none"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
+                </android.support.design.widget.TextInputLayout>
+
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/locCityText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
+                    <EditText
+                        android:id="@+id/locCity"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:ems="10"
+                        android:hint="City"
+                        android:inputType="none"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/locZoneText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
+                    <EditText
+                        android:id="@+id/locZone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:ems="10"
+                        android:hint="Zone"
+                        android:inputType="none"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
+                </android.support.design.widget.TextInputLayout>
+
+
+                <fr.ganfra.materialspinner.MaterialSpinner
+                    android:id="@+id/roadType"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:ms_enableErrorLabel="false"
+                    app:ms_floatingLabelText="Road Type"
+                    app:ms_hint="Road Type"
+                    app:ms_multiline="true"/>
+
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/locRoadNumText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
+                    <EditText
+                        android:id="@+id/locRoadNum"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:ems="10"
+                        android:hint="Road #"
+                        android:inputType="none"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/latText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
+                    <EditText
+                        android:id="@+id/lat"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:ems="10"
+                        android:hint="Latitude"
+                        android:inputType="none"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
+                </android.support.design.widget.TextInputLayout>
+
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/longText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
+                    <EditText
+                        android:id="@+id/locLong"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:ems="10"
+                        android:hint="Longitude"
+                        android:inputType="none"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
+                </android.support.design.widget.TextInputLayout>
+
+                <CheckBox
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Result of Accident?"
+                    android:id="@+id/acc"
+                    android:visibility="gone"/>
+                <CheckBox
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Court Appearance Required?"
+                    android:id="@+id/courtReq"
+                    android:visibility="gone"/>
+                <CheckBox
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Insurance Verified?"
+                    android:id="@+id/insVer"
+                    android:visibility="gone"/>
+                <CheckBox
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Vehicle Searched?"
+                    android:id="@+id/vehSearched"
+                    android:visibility="gone"/>
+
                 <Button
                     android:id="@+id/submitViolation"
                     android:layout_width="match_parent"
@@ -180,6 +370,7 @@
                     android:background="@color/colorPrimary"
                     android:elevation="2dp"
                     android:text="Submit"
+
                     android:textColor="#fff" />
 
                 <Button

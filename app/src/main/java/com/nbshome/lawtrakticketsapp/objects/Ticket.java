@@ -1,6 +1,8 @@
 package com.nbshome.lawtrakticketsapp.objects;
 
-public class Ticket
+import java.io.Serializable;
+
+public class Ticket implements Serializable
 {
     private Person owner;
     private TrialCourt court;

@@ -4,9 +4,10 @@ package com.nbshome.lawtrakticketsapp.objects;
 import com.nbshome.lawtrakticketsapp.enums.Country;
 import com.nbshome.lawtrakticketsapp.enums.Ethnicity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Person {
+public class Person implements Serializable{
     private String fName;
     private String mName;
     private String lName;

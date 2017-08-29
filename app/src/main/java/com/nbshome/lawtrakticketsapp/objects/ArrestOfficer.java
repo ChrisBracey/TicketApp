@@ -1,24 +1,26 @@
 package com.nbshome.lawtrakticketsapp.objects;
 
 
-public class ArrestOfficer
+import java.io.Serializable;
+
+public class ArrestOfficer implements Serializable
 {
 
     private String offName;
     private String offNum;
     private String bailDeposited;
     private String arrestDate;
-    private String boundAmtReq;
+    private String bondAmtReq;
 
     public ArrestOfficer() {
     }
 
-    public ArrestOfficer(String offName, String offNum, String bailDeposited, String arrestDate, String boundAmtReq) {
+    public ArrestOfficer(String offName, String offNum, String bailDeposited, String arrestDate, String bondAmtReq) {
         this.offName = offName;
         this.offNum = offNum;
         this.bailDeposited = bailDeposited;
         this.arrestDate = arrestDate;
-        this.boundAmtReq = boundAmtReq;
+        this.bondAmtReq = bondAmtReq;
     }
 
     public String getOffName() {
@@ -53,11 +55,11 @@ public class ArrestOfficer
         this.arrestDate = arrestDate;
     }
 
-    public String getBoundAmtReq() {
-        return boundAmtReq;
+    public String getBondAmtReq() {
+        return bondAmtReq;
     }
 
     public void setBoundAmtReq(String boundAmtReq) {
-        this.boundAmtReq = boundAmtReq;
+        this.bondAmtReq = bondAmtReq;
     }
 }

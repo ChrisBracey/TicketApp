@@ -2,6 +2,7 @@ package com.nbshome.lawtrakticketsapp;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -32,6 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.fitness.data.Goal;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.text.Line;
 import com.nbshome.lawtrakticketsapp.barcode.BarcodeCaptureActivity;
@@ -41,11 +43,15 @@ import com.nbshome.lawtrakticketsapp.objects.Person;
 import com.nbshome.lawtrakticketsapp.objects.Ticket;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -67,11 +73,37 @@ public class MainActivity extends AppCompatActivity
     public static String output, parsedOutput;
     public static ArrayList<Person> people;
 
+
+    public static Object readCachedFile (Context context, String key) throws IOException, ClassNotFoundException {
+        FileInputStream fis = context.openFileInput (key);
+        ObjectInputStream ois = new ObjectInputStream (fis);
+        Object object = ois.readObject ();
+        return object;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         try {
+            SharedPreferences settings = getSharedPreferences(CONFIG, 0);
+                Set set = settings.getStringSet("Array", null);
+                violators = new ArrayList<>();
+                try {
+                   violators = (ArrayList<Person>) readCachedFile(MainActivity.this, "Array");
+
+                    Log.d("People", violators.get(0).getfName());
+                } catch(Exception e)
+                {
+                    Log.d("Failed", "At Main");
+                }
+
             super.onCreate(savedInstanceState);
-            Person person1 = new Person("John", "", "Doe", "", "123 streetname", "Florence", "29505", "123456789", "d", "12/16/1994", "600", "200",
+            people = new ArrayList<>();
+            for(int i = 0; i<violators.size(); ++i)
+            {
+                people.add(violators.get(i));
+            }
+
+           /* Person person1 = new Person("John", "", "Doe", "", "123 streetname", "Florence", "29505", "123456789", "d", "12/16/1994", "600", "200",
                                         "SC", "SC", "BLK", "BRO", "M", false, "W", Country.US, "1234567890", "123121234", Ethnicity.N, "S", new ArrayList<Ticket>());
             Person person2 = new Person("Billy", "", "Bob", "", "123 streetname", "Florence", "29505", "123456789", "d", "12/16/1994", "600", "200",
                     "SC", "SC", "BLK", "BRO", "M", false, "W", Country.US, "1234567890", "123121234", Ethnicity.N, "S", new ArrayList<Ticket>());
@@ -81,7 +113,7 @@ public class MainActivity extends AppCompatActivity
             people = new ArrayList<Person>();
             people.add(person1);
             people.add(person2);
-            people.add(person3);
+            people.add(person3);*/
 
             setTitle("New Ticket");
             setContentView(R.layout.activity_main);
@@ -101,7 +133,6 @@ public class MainActivity extends AppCompatActivity
             toggle.syncState();
             NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
             navigationView.setNavigationItemSelectedListener(this);
-            SharedPreferences settings = getSharedPreferences(CONFIG, 0);
             ori = settings.getString("ORI", "");
             Log.d(TAG, ori);
             if(ori.equals(""))
@@ -116,9 +147,10 @@ public class MainActivity extends AppCompatActivity
             } else {
                 EditText text = (EditText) findViewById(R.id.token);
                 text.setHint("Token");
+                EditText userBox = (EditText) findViewById(R.id.user);
+                userBox.setVisibility(View.VISIBLE);
                 RetrieveCsvTask task = new RetrieveCsvTask();
                 task.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/"+ ori + "/myagency.csv");
-                findViewById(R.id.changeOri).setVisibility(View.VISIBLE);
             }
 
         } catch(Exception e)
@@ -194,7 +226,7 @@ public class MainActivity extends AppCompatActivity
                         token.setFilters(new InputFilter[] {
                                 new InputFilter.LengthFilter(6)
                         });
-
+                        findViewById(R.id.userText).setVisibility(View.VISIBLE);
                     } catch (Exception ex)
                     {
 
@@ -217,45 +249,13 @@ public class MainActivity extends AppCompatActivity
             }
              else if(token.getText().toString().equals(this.token))
             {
-                Button btn = (Button) findViewById(R.id.read_barcode);
-                Button btn2 = (Button) findViewById(R.id.skip);
-                btn.setEnabled(false);
-                btn2.setEnabled(false);
+                EditText userText = (EditText) findViewById(R.id.user);
+                String user = userText.getText().toString();
+                RetrieveCsvTask task = new RetrieveCsvTask();
+                task.setUser(user);
+                task.setView(v);
+                task.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/" + ori + "/logon.csv");
 
-                for(int i = 0; i<people.size(); ++i)
-                {
-                    CardView card = new CardView(getApplicationContext());
-                    CardView.LayoutParams params = new CardView.LayoutParams(
-                            CardView.LayoutParams.MATCH_PARENT,
-                            CardView.LayoutParams.WRAP_CONTENT
-                    );
-                    final float scale = getResources().getDisplayMetrics().density;
-
-                    params.setMargins(8,8,8,8);
-                    params.height = (int) (200 * scale);
-                    card.setLayoutParams(params);
-                    card.setRadius((int) (10 * scale));
-                    card.setCardBackgroundColor(Color.parseColor("#33b5e5"));
-                    card.setElevation((int) (4 * scale ));
-                    TextView tv = new TextView(getApplicationContext());
-                    tv.setLayoutParams(params);
-                    tv.setText(people.get(i).getfName() + " " + people.get(i).getlName());
-                    tv.setTextAppearance(R.style.TextAppearance_AppCompat_Headline);
-                    tv.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                    tv.setTextColor(Color.WHITE);
-                    card.addView(tv);
-                    LinearLayout cards = (LinearLayout) findViewById(R.id.cards);
-                    cards.addView(card, 0);
-                }
-
-                findViewById(R.id.submitToken).setVisibility(View.GONE);
-                findViewById(R.id.tokenTextLayout).setVisibility(View.GONE);
-                findViewById(R.id.createNew).setVisibility(View.VISIBLE);
-                findViewById(R.id.changeOri).setVisibility(View.GONE);
-
-                InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                //findViewById(R.id.tokenLayout).setVisibility(View.INVISIBLE);
             } else {
                 TextInputLayout err = (TextInputLayout) findViewById(R.id.tokenTextLayout);
                 err.setError("Wrong Token Value. Please Try again.");
@@ -263,6 +263,7 @@ public class MainActivity extends AppCompatActivity
         } else if(v.getId() == R.id.changeOri) {
             EditText text = (EditText) findViewById(R.id.token);
             text.setHint("ORI");
+            findViewById(R.id.userText).setVisibility(View.GONE);
             SharedPreferences settings = getSharedPreferences(CONFIG, 0);
             SharedPreferences.Editor editor = settings.edit();
             editor.putString("ORI", "");
@@ -277,6 +278,7 @@ public class MainActivity extends AppCompatActivity
             btn.setEnabled(true);
             btn2.setEnabled(true);
             findViewById(R.id.tokenLayout).setVisibility(View.INVISIBLE);
+            findViewById(R.id.userText).setVisibility(View.GONE);
         }
 
 
@@ -653,6 +655,9 @@ public class MainActivity extends AppCompatActivity
     }
 
  String token = "";
+    public static  String user, officerId, offName, rank, badgeNum, stateid;
+    public static String courtName, courtAddress, courtCity, courtZip, courtState;
+    boolean badUsername = false;
     class RetrieveCsvTask extends AsyncTask<String, Void, List<String[]>> {
         private Exception exception;
 
@@ -684,23 +689,110 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
+        String user = "NothingHasBeenEntered";
+        View v;
+
+        public void setUser(String user) {
+            this.user = user;
+
+        }
+
+        public void setView(View v) {
+            this.v = v;
+        }
+
         protected void onPostExecute(List<String[]> list)
         {
                 ArrayList stuff = new ArrayList();
-            try {
-                token = list.get(1)[list.get(1).length - 1];
-                flag = false;
-                EditText token = (EditText) findViewById(R.id.token);
-                token.setText("");
-                token.setHint("Token");
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                CharSequence err = "Please Enter a valid ORI";
-                int duration     = Toast.LENGTH_SHORT;
+            if(!user.equals("NothingHasBeenEntered"))
+            {
+                    for (int i = 1; i < list.size(); ++i) {
+                        if (user.toLowerCase().equals(list.get(i)[0].toLowerCase())) {
+                            badUsername = false;
+                            user = list.get(i)[0];
+                            officerId = list.get(i)[1];
+                            offName = list.get(i)[2];
+                            rank = list.get(i)[3];
+                            badgeNum = list.get(i)[4];
+                            stateid = list.get(i)[5];
 
-                Toast toast      = Toast.makeText(getApplicationContext(), err, duration);
-                toast.show();
-                flag = true;
+                            Button btn = (Button) findViewById(R.id.read_barcode);
+                            Button btn2 = (Button) findViewById(R.id.skip);
+                            btn.setEnabled(false);
+                            btn2.setEnabled(false);
+
+                            for (int j = 0; j < people.size(); ++j) {
+                                CardView card = new CardView(getApplicationContext());
+                                CardView.LayoutParams params = new CardView.LayoutParams(
+                                        CardView.LayoutParams.MATCH_PARENT,
+                                        CardView.LayoutParams.WRAP_CONTENT
+                                );
+                                final float scale = getResources().getDisplayMetrics().density;
+
+                                params.setMargins(8, 8, 8, 8);
+                                params.height = (int) (200 * scale);
+                                card.setLayoutParams(params);
+                                card.setRadius((int) (10 * scale));
+                                card.setCardBackgroundColor(Color.parseColor("#33b5e5"));
+                                card.setElevation((int) (4 * scale));
+                                TextView tv = new TextView(getApplicationContext());
+                                tv.setLayoutParams(params);
+                                tv.setText(people.get(j).getfName() + " " + people.get(j).getlName());
+                                tv.setTextAppearance(R.style.TextAppearance_AppCompat_Headline);
+                                tv.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                                tv.setTextColor(Color.WHITE);
+                                card.addView(tv);
+                                LinearLayout cards = (LinearLayout) findViewById(R.id.cards);
+                                cards.addView(card, 0);
+                            }
+
+                            findViewById(R.id.submitToken).setVisibility(View.GONE);
+                            findViewById(R.id.tokenTextLayout).setVisibility(View.GONE);
+                            findViewById(R.id.userText).setVisibility(View.GONE);
+                            findViewById(R.id.createNew).setVisibility(View.VISIBLE);
+                            findViewById(R.id.changeOri).setVisibility(View.GONE);
+
+                            InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                            //findViewById(R.id.tokenLayout).setVisibility(View.INVISIBLE);
+                            return;
+                        } else {
+                            badUsername = true;
+                            CharSequence err = "Please Enter a Valid Username";
+                            int duration = Toast.LENGTH_SHORT;
+                            Toast toast = Toast.makeText(getApplicationContext(), err, duration);
+                            toast.show();
+                            return;
+                        }
+                    }
+
+            } else {
+                try {
+                    token = list.get(1)[list.get(1).length - 1];
+
+                    courtName = list.get(1)[9];
+                    courtAddress = list.get(1)[10];
+                    courtCity = list.get(1)[11];
+                    courtState = list.get(1)[12];
+                    courtZip = list.get(1)[13];
+                    courtType = list.get(1)[8];
+                    courtTime = list.get(1
+                    )[19];
+                    flag = false;
+                    EditText token = (EditText) findViewById(R.id.token);
+                    token.setText("");
+                    token.setHint("Token");
+                    EditText user = (EditText) findViewById(R.id.user);
+                    user.setVisibility(View.VISIBLE);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    CharSequence err = "Please Enter a valid ORI";
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(getApplicationContext(), err, duration);
+                    toast.show();
+                    flag = true;
+                }
             }
 
         }
