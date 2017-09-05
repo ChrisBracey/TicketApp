@@ -17,7 +17,9 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,6 +53,7 @@ import java.net.URLConnection;
 import java.security.Permission;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -114,8 +117,8 @@ public class Violation extends Fragment implements View.OnClickListener, Locatio
     Spinner tc, cdrSpinner, statuteSpinner, date, roadType;
     Button submit, skip;
     TextView locHeader, vioHeader;
-    TextInputLayout descLayout, offLayout, pointsLayout, cdrLayout, fineLayout,locLayout, cityLayout, zoneLayout, roadNumLayout, latLayout, longLayout, baLayout ;
-    EditText descBox, offBox, pointsBox, cdrBox, fineBox,locBox, cityBox, zoneBox, roadNumBox, latBox, longBox, baBox;
+    TextInputLayout descLayout, offLayout, pointsLayout, cdrLayout, fineLayout,locLayout, cityLayout, zoneLayout, roadNumLayout, latLayout, longLayout, baLayout, dateOfArrestLayout ;
+    EditText descBox, offBox, pointsBox, cdrBox, fineBox,locBox, cityBox, zoneBox, roadNumBox, latBox, longBox, baBox, dateOfArrestBox;
     CheckBox refused, blow0;
 
 
@@ -141,6 +144,71 @@ public class Violation extends Fragment implements View.OnClickListener, Locatio
         fineBox = (EditText) v.findViewById(R.id.fine);
         date = (MaterialSpinner) v.findViewById(R.id.date);
         vioHeader = (TextView) v.findViewById(R.id.violationHeader);
+        dateOfArrestLayout = (TextInputLayout)v.findViewById(R.id.dateOfArrestText);
+        dateOfArrestBox = (EditText) v.findViewById(R.id.dateOfArrest);
+
+        dateOfArrestBox.addTextChangedListener(new TextWatcher() {
+
+            private String current = "";
+            private String ddmmyyyy = "MMDDYYYY";
+            private Calendar cal = Calendar.getInstance();
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (!s.toString().equals(current)) {
+                    String clean = s.toString().replaceAll("[^\\d.]", "");
+                    String cleanC = current.replaceAll("[^\\d.]", "");
+
+                    int cl = clean.length();
+                    int sel = cl;
+                    for (int i = 2; i <= cl && i < 6; i += 2) {
+                        sel++;
+                    }
+                    //Fix for pressing delete next to a forward slash
+                    if (clean.equals(cleanC)) sel--;
+
+                    if (clean.length() < 8){
+                        clean = clean + ddmmyyyy.substring(clean.length());
+                    }else{
+                        //This part makes sure that when we finish entering numbers
+                        //the date is correct, fixing it otherwise
+                        int mon  = Integer.parseInt(clean.substring(0,2));
+                        int day  = Integer.parseInt(clean.substring(2,4));
+                        int year = Integer.parseInt(clean.substring(4,8));
+
+                        if(mon > 12) mon = 12;
+                        cal.set(Calendar.MONTH, mon-1);
+                        year = (year<1900)?1900:(year>2100)?2100:year;
+                        cal.set(Calendar.YEAR, year);
+                        // ^ first set year for the line below to work correctly
+                        //with leap years - otherwise, date e.g. 29/02/2012
+                        //would be automatically corrected to 28/02/2012
+
+                        day = (day > cal.getActualMaximum(Calendar.DATE))? cal.getActualMaximum(Calendar.DATE):day;
+                        clean = String.format("%02d%02d%02d",mon, day, year);
+                    }
+
+                    clean = String.format("%s/%s/%s", clean.substring(0, 2),
+                            clean.substring(2, 4),
+                            clean.substring(4, 8));
+
+                    sel = sel < 0 ? 0 : sel;
+                    current = clean;
+                    dateOfArrestBox.setText(current);
+                    dateOfArrestBox.setSelection(sel < current.length() ? sel : current.length());
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
         locHeader = (TextView) v.findViewById(R.id.locHeader);
 
@@ -283,6 +351,9 @@ LocationManager locationManager;
     public void onClick(View v) {
         if(v.getId() == R.id.submitViolation) {
             if (flag && !otherFlag) {
+                baLayout.setVisibility(View.GONE);
+                blow0.setVisibility(View.GONE);
+                refused.setVisibility(View.GONE);
                 date.setVisibility(View.VISIBLE);
                 fineLayout.setVisibility(View.VISIBLE);
                 descLayout.setVisibility(View.GONE);
@@ -317,6 +388,9 @@ LocationManager locationManager;
             {
                 com.nbshome.lawtrakticketsapp.objects.Violation vio = new com.nbshome.lawtrakticketsapp.objects.Violation();
                 vio.setCourtAppearance(((CheckBox)getActivity().findViewById(R.id.courtReq)).isChecked());
+                vio.setInsuranceVer(((CheckBox)getActivity().findViewById(R.id.insVer)).isChecked());
+                vio.setVehSearched(((CheckBox)getActivity().findViewById(R.id.vehSearched)).isChecked());
+                vio.setResultOfAcc(((CheckBox)getActivity().findViewById(R.id.acc)).isChecked());
                 vio.setPoints(pointsBox.getText().toString());
                 vio.setRoadType(roadType.getSelectedItem().toString());
                 vio.setVioLat(latBox.getText().toString());
@@ -324,6 +398,7 @@ LocationManager locationManager;
                 vio.setViolationLocation(locBox.getText().toString());
                 vio.setVioLong(longBox.getText().toString());
                 vio.setZone(zoneBox.getText().toString());
+                MainActivity.courtDate = date.getSelectedItem().toString();
 
                 MainActivity.violators.get(MainActivity.violators.size() - 1).getTickets().get
                         (MainActivity.violators.get(MainActivity.violators.size() - 1).getTickets().size() - 1).setViolation(vio);
@@ -348,9 +423,13 @@ LocationManager locationManager;
                         final File f = new File(dir, f_name + ".xml");
                         FileWriter fw = new FileWriter(f);
                         BufferedWriter out = new BufferedWriter(fw);
+                        MainActivity.violators.get(MainActivity.violators.size()-1).getTickets().get(MainActivity.violators.get(
+                                MainActivity.violators.size()-1).getTickets().size() - 1)
+                                .getViolation().setBALevel(baBox.getText().toString());
 
                         out.write("<VIOLATOR>\r\n" +
                                 "\t<TicketNum>" + f_name +"</TicketNum>\r\n" +
+                                "\t<CaseNum>" + "</CaseNum>\r\n" +
                                 "\t<FirstName>" + MainActivity.violators.get(MainActivity.violators.size()-1).getfName() + "</FirstName>\r\n" +
                                 "\t<MiddleName>" + MainActivity.violators.get(MainActivity.violators.size()-1).getmName() + "</MiddleName>\r\n" +
                                 "\t<LastName>" + MainActivity.violators.get(MainActivity.violators.size()-1).getlName() + "</LastName>\r\n" +
@@ -415,12 +494,14 @@ LocationManager locationManager;
                                 .getOwner().getVehicle().getPlateState() + "</PlateState>\r\n" +
                                 "\t</VEHICLE>\r\n" +
                                 "\t<VIOLATION>\r\n" +
+                                "<TrafficCode>" + "</TrafficCode>\r\n" +
                                 "\t\t<ViolationSectionNum>"  + MainActivity.violators.get(MainActivity.violators.size()-1).getTickets().get(MainActivity.violators.get(
                                 MainActivity.violators.size()-1).getTickets().size() - 1)
                                 .getViolation().getViolationSectionNo() + "</ViolationSectionNum>\r\n" +
                                 "\t\t<ViolationDescription>" + MainActivity.violators.get(MainActivity.violators.size()-1).getTickets().get(MainActivity.violators.get(
                                 MainActivity.violators.size()-1).getTickets().size() - 1)
                                 .getViolation().getViolation() + "</ViolationDescription>\r\n" +
+                                "\t\t<ViolationShort>" + "</ViolationShort>\r\n" +
                                 "\t\t<ViolationDate>" + MainActivity.violators.get(MainActivity.violators.size()-1).getTickets().get(MainActivity.violators.get(
                                 MainActivity.violators.size()-1).getTickets().size() - 1)
                                 .getViolation().getViolationDate() + "</ViolationDate>\r\n" +
@@ -438,6 +519,8 @@ LocationManager locationManager;
                                 "\t\t<BALevel>" + MainActivity.violators.get(MainActivity.violators.size()-1).getTickets().get(MainActivity.violators.get(
                                 MainActivity.violators.size()-1).getTickets().size() - 1)
                                 .getViolation().getBALevel() + "</BALevel>\r\n" +
+                                "\t\t<Blow0>" + blow0.isChecked() + "</Blow0>\r\n" +
+                                "\t\t<BARefused>" + refused.isChecked() + "</BARefused>\r\n" +
                                 "\t\t<Location>"  + MainActivity.violators.get(MainActivity.violators.size()-1).getTickets().get(MainActivity.violators.get(
                                 MainActivity.violators.size()-1).getTickets().size() - 1)
                                 .getViolation().getViolationLocation() + "</Location>\r\n" +
@@ -480,6 +563,8 @@ LocationManager locationManager;
                                 "\t\t<IDNum>" + MainActivity.stateid + "</IDNum>\r\n" +
                                 "\t\t<BailDeposited>" + "</BailDeposited>\r\n" +
                                 "\t\t<ArrestDate>" + "</ArrestDate>\r\n" +
+                                "\t\t<ArrestTime>" + "</ArrestTime>\r\n" +
+                                "\t\t<BailJail>" + "</BailJail>\r\n" +
                                 "\t\t<ViolationDate>" + "</ViolationDate>\r\n" +
                                 "\t\t<BondAmount>" + "</BondAmount>\r\n" +
                                 "\t</OFFICER>\r\n" +
@@ -766,7 +851,7 @@ LocationManager locationManager;
                 } else if (flag) {
                     for (int i = 1; i < list.size(); ++i) {
                         if (list.get(i)[0].equals(code)) {
-                            if(list.get(i)[0].contains("56-05-2930") || list.get(i)[0].contains("56-05-2933") || list.get(i)[0].contains("56-05-2945"))
+                            if(list.get(i)[2].contains("56-05-2930") || list.get(i)[2].contains("56-05-2933") || list.get(i)[2].contains("56-05-2945"))
                             {
                                 baLayout.setVisibility(View.VISIBLE);
                                 refused.setVisibility(View.VISIBLE);

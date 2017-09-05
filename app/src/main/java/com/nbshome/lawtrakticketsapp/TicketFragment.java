@@ -378,6 +378,7 @@ public class TicketFragment extends Fragment implements View.OnClickListener{
                 }
                 if(!sex.getSelectedItem().toString().equals("Sex")) {
                     violator.setSex(sex.getSelectedItem().toString());
+                    violator.setDob(MainActivity.dob);
                 } else {
 					Context context  = getContext();
 					CharSequence err = "A Sex must be selected";
