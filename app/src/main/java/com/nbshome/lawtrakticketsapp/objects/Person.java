@@ -35,6 +35,16 @@ public class Person implements Serializable{
     private Vehicle vehicle;
     private ArrayList<Ticket> tickets;
 
+    public String getTicketNumber() {
+        return ticketNumber;
+    }
+
+    public void setTicketNumber(String ticketNumber) {
+        this.ticketNumber = ticketNumber;
+    }
+
+    private String ticketNumber;
+
 
     public Person() {
         tickets = new ArrayList<Ticket>();

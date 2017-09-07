@@ -3,6 +3,7 @@ package com.nbshome.lawtrakticketsapp;
 import android.*;
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -16,6 +17,7 @@ import android.provider.SyncStateContract;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.InputType;
@@ -77,6 +79,7 @@ public class Violation extends Fragment implements View.OnClickListener, Locatio
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    String code = "";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -346,6 +349,8 @@ LocationManager locationManager;
 
     CheckBox courtReq, ROA, insVer, vehSearched;
 
+    private static final String CONFIG = "Config";
+
 
     @Override
     public void onClick(View v) {
@@ -398,6 +403,10 @@ LocationManager locationManager;
                 vio.setViolationLocation(locBox.getText().toString());
                 vio.setVioLong(longBox.getText().toString());
                 vio.setZone(zoneBox.getText().toString());
+                vio.setViolation(descBox.getText().toString());
+
+                final String f_name = new SimpleDateFormat("yyyyMMddhhmm").format(new Date());
+                MainActivity.violators.get(MainActivity.violators.size()-1).setTicketNumber(f_name);
                 MainActivity.courtDate = date.getSelectedItem().toString();
 
                 MainActivity.violators.get(MainActivity.violators.size() - 1).getTickets().get
@@ -419,14 +428,13 @@ LocationManager locationManager;
                     if (root.canWrite()) {
                         File dir = new File(root.getAbsoluteFile() + "/ftp");
                         dir.mkdirs();
-                        final String f_name = new SimpleDateFormat("yyyyMMddhhmm").format(new Date());
                         final File f = new File(dir, f_name + ".xml");
                         FileWriter fw = new FileWriter(f);
                         BufferedWriter out = new BufferedWriter(fw);
                         MainActivity.violators.get(MainActivity.violators.size()-1).getTickets().get(MainActivity.violators.get(
                                 MainActivity.violators.size()-1).getTickets().size() - 1)
                                 .getViolation().setBALevel(baBox.getText().toString());
-
+                        Log.d("FIle Name", f_name);
                         out.write("<VIOLATOR>\r\n" +
                                 "\t<TicketNum>" + f_name +"</TicketNum>\r\n" +
                                 "\t<CaseNum>" + "</CaseNum>\r\n" +
@@ -494,7 +502,7 @@ LocationManager locationManager;
                                 .getOwner().getVehicle().getPlateState() + "</PlateState>\r\n" +
                                 "\t</VEHICLE>\r\n" +
                                 "\t<VIOLATION>\r\n" +
-                                "<TrafficCode>" + "</TrafficCode>\r\n" +
+                                "\t\t<TrafficCode>"+ code + "</TrafficCode>\r\n" +
                                 "\t\t<ViolationSectionNum>"  + MainActivity.violators.get(MainActivity.violators.size()-1).getTickets().get(MainActivity.violators.get(
                                 MainActivity.violators.size()-1).getTickets().size() - 1)
                                 .getViolation().getViolationSectionNo() + "</ViolationSectionNum>\r\n" +
@@ -512,8 +520,6 @@ LocationManager locationManager;
                                 MainActivity.violators.size()-1).getTickets().size() - 1)
                                 .getViolation().getPostActSpeed() + "</PostedActSpeed>\r\n" +
                                 "\t\t<Points>" + MainActivity.violators.get(MainActivity.violators.size()-1).getTickets().get(MainActivity.violators.get(
-                                MainActivity.violators.size()-1).getTickets().size() - 1)
-                                .getViolation().getPoints() + MainActivity.violators.get(MainActivity.violators.size()-1).getTickets().get(MainActivity.violators.get(
                                 MainActivity.violators.size()-1).getTickets().size() - 1)
                                 .getViolation().getPoints() + "</Points>\r\n" +
                                 "\t\t<BALevel>" + MainActivity.violators.get(MainActivity.violators.size()-1).getTickets().get(MainActivity.violators.get(
@@ -585,10 +591,12 @@ LocationManager locationManager;
                             @Override
                             public void run() {
                                 try {
-                                    URL url = new URL("ftp://sitebackups:backmeup~01@nbshome.com/etickets/" + MainActivity.ori + "/test/" + f_name + ".xml");
+                                    URL url = new URL("ftp://sitebackups:backmeup~01@nbshome.com/etickets/" + MainActivity.ori + "/printouts/" + f_name + ".xml");
                                     URLConnection conn = url.openConnection();
                                     OutputStream outputStream = conn.getOutputStream();
                                     FileInputStream inputStream = new FileInputStream(f.getAbsolutePath());
+
+
 
                                     byte[] buffer = new byte[4096];
                                     int bytesRead;
@@ -596,16 +604,27 @@ LocationManager locationManager;
                                         outputStream.write(buffer, 0, bytesRead);
                                     }
 
+
                                     inputStream.close();
                                     outputStream.close();
                                     f.delete();
                                     Log.d("File", "Uploaded");
+                                    SharedPreferences settings = getActivity().getSharedPreferences(CONFIG, 0);
+                                    SharedPreferences.Editor editor = settings.edit();
+                                    editor.putBoolean("SkipToken", true);
+
+                                    Intent i = getActivity().getBaseContext().getPackageManager()
+                                            .getLaunchIntentForPackage( getActivity().getBaseContext().getPackageName() );
+                                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    startActivity(i);
+
                                 } catch ( Exception e) {
                                     e.printStackTrace();
                                 }
                             }
                         });
                         thread.start();
+
 
 
                     }
@@ -617,6 +636,7 @@ LocationManager locationManager;
             }
             else {
                 if (!skippedTC) {
+                    code = tc.getSelectedItem().toString();
                     RetrieveCsvTask task = new RetrieveCsvTask();
                     Log.d("STUFF", tc.getSelectedItem().toString().substring(0, 2));
                     task.setFlag(true, tc.getSelectedItem().toString().substring(0, 2));

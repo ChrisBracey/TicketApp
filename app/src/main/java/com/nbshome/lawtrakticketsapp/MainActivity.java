@@ -2,10 +2,12 @@ package com.nbshome.lawtrakticketsapp;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,7 +15,9 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.CardView;
+import android.text.Html;
 import android.text.InputFilter;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -158,7 +162,7 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
     }
-    boolean skipLic = false, skipReg = false;
+    static boolean skipLic = false, skipReg = false;
     public static String ori;
 
 
@@ -212,11 +216,11 @@ public class MainActivity extends AppCompatActivity
         } else if(v.getId() == R.id.submitToken)
         {
             EditText token = (EditText) findViewById(R.id.token);
+            SharedPreferences settings = getSharedPreferences(CONFIG, 0);
+            SharedPreferences.Editor editor = settings.edit();
             if(flag)
             {
                 if(!token.getText().toString().equals("")) {
-                    SharedPreferences settings = getSharedPreferences(CONFIG, 0);
-                    SharedPreferences.Editor editor = settings.edit();
                     editor.putString("ORI", token.getText().toString());
                     editor.commit();
                     ori = settings.getString("ORI", "");
@@ -247,7 +251,7 @@ public class MainActivity extends AppCompatActivity
                     err.setError("You must enter an ORI");
                 }
             }
-             else if(token.getText().toString().equals(this.token))
+             else if(token.getText().toString().equals(this.token) || settings.getBoolean("SkipToken", true))
             {
                 EditText userText = (EditText) findViewById(R.id.user);
                 String user = userText.getText().toString();
@@ -412,7 +416,7 @@ public class MainActivity extends AppCompatActivity
 
     public static String courtDate, courtTime, courtType, trialOffId, trialOffName, judgeId, judgeName;
 
-    public void clearVars() {
+    public static void clearVars() {
         expDate = "";
 		lastName = "";
 		middleName = "";
@@ -742,6 +746,37 @@ public class MainActivity extends AppCompatActivity
                                 tv.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
                                 tv.setTextColor(Color.WHITE);
                                 card.addView(tv);
+
+
+                                TextView tv2 = new TextView(getApplicationContext());
+                                tv2.setLayoutParams(params);
+                                final int temp = j;
+                                tv2.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        String url = "ftp://sitebackups:backmeup~01@nbshome.com/etickets/"  + ori + "/printouts/" + people.get(temp).getTicketNumber() + ".pdf";
+                                        String uri = "googlechrome://navigate?url=" + url;
+                                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        intent.setPackage("com.android.chrome");
+                                        try {
+                                            getApplicationContext().startActivity(intent);
+                                        } catch (ActivityNotFoundException ex) {
+                                            // Chrome browser presumably not installed so allow user to choose instead
+                                            intent.setPackage(null);
+                                            getApplicationContext().startActivity(intent);
+                                        }
+                                    }
+                                });
+                                String text = people.get(j).getTicketNumber();
+                                tv2.setText("\n\n\n" + text);
+                                tv2.setTextAppearance(R.style.TextAppearance_AppCompat_Headline);
+                                tv2.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                                tv2.setTextColor(Color.WHITE);
+                                tv2.setPaintFlags(tv2.getPaintFlags()| Paint.UNDERLINE_TEXT_FLAG);
+
+                                card.addView(tv2);
                                 LinearLayout cards = (LinearLayout) findViewById(R.id.cards);
                                 cards.addView(card, 0);
                             }
