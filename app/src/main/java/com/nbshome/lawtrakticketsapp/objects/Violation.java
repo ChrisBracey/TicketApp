@@ -32,6 +32,16 @@ public class Violation implements Serializable
 
     private boolean vehSearched;
 
+    public String getTimeOfArrest() {
+        return timeOfArrest;
+    }
+
+    public void setTimeOfArrest(String timeOfArrest) {
+        this.timeOfArrest = timeOfArrest;
+    }
+
+    private String timeOfArrest;
+
 
     public Violation() {
     }

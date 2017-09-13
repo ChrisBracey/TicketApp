@@ -90,6 +90,9 @@ public class MainActivity extends AppCompatActivity
         try {
             SharedPreferences settings = getSharedPreferences(CONFIG, 0);
                 Set set = settings.getStringSet("Array", null);
+
+            user = settings.getString("User", null);
+
                 violators = new ArrayList<>();
                 try {
                    violators = (ArrayList<Person>) readCachedFile(MainActivity.this, "Array");
@@ -150,11 +153,20 @@ public class MainActivity extends AppCompatActivity
                 flag = true;
             } else {
                 EditText text = (EditText) findViewById(R.id.token);
+                text.setText(settings.getString("Token", null));
                 text.setHint("Token");
                 EditText userBox = (EditText) findViewById(R.id.user);
                 userBox.setVisibility(View.VISIBLE);
+                userBox.setText(settings.getString("User", null));
                 RetrieveCsvTask task = new RetrieveCsvTask();
                 task.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/"+ ori + "/myagency.csv");
+                //Thread.sleep(1000);
+                Log.d("Token", settings.getString("Token", null));
+                Log.d("User", settings.getString("User", null));
+                if(!text.getText().equals("") && !userBox.getText().equals("")) {
+                    Button btn = (Button) findViewById(R.id.submitToken);
+                    btn.performClick();
+                }
             }
 
         } catch(Exception e)
@@ -251,14 +263,17 @@ public class MainActivity extends AppCompatActivity
                     err.setError("You must enter an ORI");
                 }
             }
-             else if(token.getText().toString().equals(this.token) || settings.getBoolean("SkipToken", true))
+             else if(token.getText().toString().equals(this.token))
             {
                 EditText userText = (EditText) findViewById(R.id.user);
-                String user = userText.getText().toString();
+                user = userText.getText().toString();
                 RetrieveCsvTask task = new RetrieveCsvTask();
                 task.setUser(user);
                 task.setView(v);
                 task.execute("ftp://sitebackups:backmeup~01@nbshome.com/etickets/" + ori + "/logon.csv");
+                editor.putString("Token", null);
+                editor.putString("User", null);
+                editor.commit();
 
             } else {
                 TextInputLayout err = (TextInputLayout) findViewById(R.id.tokenTextLayout);
@@ -658,7 +673,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
- String token = "";
+ public static String token = "";
     public static  String user, officerId, offName, rank, badgeNum, stateid;
     public static String courtName, courtAddress, courtCity, courtZip, courtState;
     boolean badUsername = false;

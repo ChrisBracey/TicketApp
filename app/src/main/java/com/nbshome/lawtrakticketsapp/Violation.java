@@ -120,8 +120,11 @@ public class Violation extends Fragment implements View.OnClickListener, Locatio
     Spinner tc, cdrSpinner, statuteSpinner, date, roadType;
     Button submit, skip;
     TextView locHeader, vioHeader;
-    TextInputLayout descLayout, offLayout, pointsLayout, cdrLayout, fineLayout,locLayout, cityLayout, zoneLayout, roadNumLayout, latLayout, longLayout, baLayout, dateOfArrestLayout ;
-    EditText descBox, offBox, pointsBox, cdrBox, fineBox,locBox, cityBox, zoneBox, roadNumBox, latBox, longBox, baBox, dateOfArrestBox;
+    TextInputLayout descLayout, offLayout, pointsLayout, cdrLayout, fineLayout,locLayout, cityLayout,
+            zoneLayout, roadNumLayout, latLayout, longLayout, baLayout, dateOfArrestLayout, timeOfArrestLayout,
+            timeOfVioLayout, dateOfVioLayout, speedLayout;
+    EditText descBox, offBox, pointsBox, cdrBox, fineBox,locBox, cityBox, zoneBox, roadNumBox, latBox,
+            longBox, baBox, dateOfArrestBox, timeofArrestBox, timeOfVioBox, dateOfVioBox, speedBox;
     CheckBox refused, blow0;
 
 
@@ -149,6 +152,81 @@ public class Violation extends Fragment implements View.OnClickListener, Locatio
         vioHeader = (TextView) v.findViewById(R.id.violationHeader);
         dateOfArrestLayout = (TextInputLayout)v.findViewById(R.id.dateOfArrestText);
         dateOfArrestBox = (EditText) v.findViewById(R.id.dateOfArrest);
+
+        timeOfArrestLayout = (TextInputLayout) v.findViewById(R.id.timeOfArrestText) ;
+        timeofArrestBox = (EditText) v.findViewById(R.id.timeOfArrest);
+
+        timeOfVioLayout = (TextInputLayout) v.findViewById(R.id.timeOfVioText);
+        timeOfVioBox = (EditText) v.findViewById(R.id.timeOfVio);
+
+        dateOfVioLayout = (TextInputLayout) v.findViewById(R.id.dateOfVioText);
+        dateOfVioBox = (EditText) v.findViewById(R.id.dateOfVio);
+
+        speedLayout = (TextInputLayout) v.findViewById(R.id.speedText);
+        speedBox = (EditText) v.findViewById(R.id.speed);
+
+        dateOfVioBox.addTextChangedListener(new TextWatcher() {
+
+            private String current = "";
+            private String ddmmyyyy = "MMDDYYYY";
+            private Calendar cal = Calendar.getInstance();
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (!s.toString().equals(current)) {
+                    String clean = s.toString().replaceAll("[^\\d.]", "");
+                    String cleanC = current.replaceAll("[^\\d.]", "");
+
+                    int cl = clean.length();
+                    int sel = cl;
+                    for (int i = 2; i <= cl && i < 6; i += 2) {
+                        sel++;
+                    }
+                    //Fix for pressing delete next to a forward slash
+                    if (clean.equals(cleanC)) sel--;
+
+                    if (clean.length() < 8){
+                        clean = clean + ddmmyyyy.substring(clean.length());
+                    }else{
+                        //This part makes sure that when we finish entering numbers
+                        //the date is correct, fixing it otherwise
+                        int mon  = Integer.parseInt(clean.substring(0,2));
+                        int day  = Integer.parseInt(clean.substring(2,4));
+                        int year = Integer.parseInt(clean.substring(4,8));
+
+                        if(mon > 12) mon = 12;
+                        cal.set(Calendar.MONTH, mon-1);
+                        year = (year<1900)?1900:(year>2100)?2100:year;
+                        cal.set(Calendar.YEAR, year);
+                        // ^ first set year for the line below to work correctly
+                        //with leap years - otherwise, date e.g. 29/02/2012
+                        //would be automatically corrected to 28/02/2012
+
+                        day = (day > cal.getActualMaximum(Calendar.DATE))? cal.getActualMaximum(Calendar.DATE):day;
+                        clean = String.format("%02d%02d%02d",mon, day, year);
+                    }
+
+                    clean = String.format("%s/%s/%s", clean.substring(0, 2),
+                            clean.substring(2, 4),
+                            clean.substring(4, 8));
+
+                    sel = sel < 0 ? 0 : sel;
+                    current = clean;
+                    dateOfVioBox.setText(current);
+                    dateOfVioBox.setSelection(sel < current.length() ? sel : current.length());
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
         dateOfArrestBox.addTextChangedListener(new TextWatcher() {
 
@@ -240,6 +318,10 @@ public class Violation extends Fragment implements View.OnClickListener, Locatio
         baBox = (EditText) v.findViewById(R.id.baLevel);
         refused = (CheckBox) v.findViewById(R.id.baRefused);
         blow0 = (CheckBox) v.findViewById(R.id.ba0);
+
+
+        doaLayout = (TextInputLayout) v.findViewById(R.id.dateOfArrestText);
+        doa = (EditText) v.findViewById(R.id.dateOfArrest);
 
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
@@ -351,7 +433,8 @@ LocationManager locationManager;
 
     private static final String CONFIG = "Config";
 
-
+    private TextInputLayout doaLayout;
+    private EditText doa;
     @Override
     public void onClick(View v) {
         if(v.getId() == R.id.submitViolation) {
@@ -374,6 +457,11 @@ LocationManager locationManager;
                 locHeader.setVisibility(View.VISIBLE);
                 latLayout.setVisibility(View.VISIBLE);
                 longLayout.setVisibility(View.VISIBLE);
+                doaLayout.setVisibility(View.VISIBLE);
+                timeOfArrestLayout.setVisibility(View.VISIBLE);
+                timeOfVioLayout.setVisibility(View.VISIBLE);
+                dateOfVioLayout.setVisibility(View.VISIBLE);
+
                 vioHeader.setText("Court Information");
                 courtReq = (CheckBox)getActivity().findViewById(R.id.courtReq);
                 courtReq.setVisibility(View.VISIBLE);
@@ -404,6 +492,15 @@ LocationManager locationManager;
                 vio.setVioLong(longBox.getText().toString());
                 vio.setZone(zoneBox.getText().toString());
                 vio.setViolation(descBox.getText().toString());
+                vio.setRoadNum(roadNumBox.getText().toString());
+                vio.setViolationSectionNo(section);
+                vio.setTimeOfArrest(timeofArrestBox.getText().toString());
+                vio.setViolationTime(timeOfVioBox.getText().toString());
+                vio.setViolationDate(dateOfVioBox.getText().toString());
+                vio.setPostActSpeed(speedBox.getText().toString());
+
+
+
 
                 final String f_name = new SimpleDateFormat("yyyyMMddhhmm").format(new Date());
                 MainActivity.violators.get(MainActivity.violators.size()-1).setTicketNumber(f_name);
@@ -436,6 +533,7 @@ LocationManager locationManager;
                                 .getViolation().setBALevel(baBox.getText().toString());
                         Log.d("FIle Name", f_name);
                         out.write("<VIOLATOR>\r\n" +
+                                "\t<Status>A" + "</Status>\r\n" +
                                 "\t<TicketNum>" + f_name +"</TicketNum>\r\n" +
                                 "\t<CaseNum>" + "</CaseNum>\r\n" +
                                 "\t<FirstName>" + MainActivity.violators.get(MainActivity.violators.size()-1).getfName() + "</FirstName>\r\n" +
@@ -506,10 +604,8 @@ LocationManager locationManager;
                                 "\t\t<ViolationSectionNum>"  + MainActivity.violators.get(MainActivity.violators.size()-1).getTickets().get(MainActivity.violators.get(
                                 MainActivity.violators.size()-1).getTickets().size() - 1)
                                 .getViolation().getViolationSectionNo() + "</ViolationSectionNum>\r\n" +
-                                "\t\t<ViolationDescription>" + MainActivity.violators.get(MainActivity.violators.size()-1).getTickets().get(MainActivity.violators.get(
-                                MainActivity.violators.size()-1).getTickets().size() - 1)
-                                .getViolation().getViolation() + "</ViolationDescription>\r\n" +
-                                "\t\t<ViolationShort>" + "</ViolationShort>\r\n" +
+                                "\t\t<ViolationDescription>" + longDesc + "</ViolationDescription>\r\n" +
+                                "\t\t<ViolationShort>" + desc + "</ViolationShort>\r\n" +
                                 "\t\t<ViolationDate>" + MainActivity.violators.get(MainActivity.violators.size()-1).getTickets().get(MainActivity.violators.get(
                                 MainActivity.violators.size()-1).getTickets().size() - 1)
                                 .getViolation().getViolationDate() + "</ViolationDate>\r\n" +
@@ -568,8 +664,10 @@ LocationManager locationManager;
                                 "\t\t<Name>" + MainActivity.rank + " " + MainActivity.offName + "</Name>\r\n" +
                                 "\t\t<IDNum>" + MainActivity.stateid + "</IDNum>\r\n" +
                                 "\t\t<BailDeposited>" + "</BailDeposited>\r\n" +
-                                "\t\t<ArrestDate>" + "</ArrestDate>\r\n" +
-                                "\t\t<ArrestTime>" + "</ArrestTime>\r\n" +
+                                "\t\t<ArrestDate>" + doa.getText().toString()+ "</ArrestDate>\r\n" +
+                                "\t\t<ArrestTime>"+ MainActivity.violators.get(MainActivity.violators.size()-1).getTickets().get(MainActivity.violators.get(
+                                MainActivity.violators.size()-1).getTickets().size() - 1)
+                                .getViolation().getTimeOfArrest() + "</ArrestTime>\r\n" +
                                 "\t\t<BailJail>" + "</BailJail>\r\n" +
                                 "\t\t<ViolationDate>" + "</ViolationDate>\r\n" +
                                 "\t\t<BondAmount>" + "</BondAmount>\r\n" +
@@ -611,7 +709,9 @@ LocationManager locationManager;
                                     Log.d("File", "Uploaded");
                                     SharedPreferences settings = getActivity().getSharedPreferences(CONFIG, 0);
                                     SharedPreferences.Editor editor = settings.edit();
-                                    editor.putBoolean("SkipToken", true);
+                                    editor.putString("Token", MainActivity.token);
+                                    editor.putString("User", MainActivity.user);
+                                    editor.commit();
 
                                     Intent i = getActivity().getBaseContext().getPackageManager()
                                             .getLaunchIntentForPackage( getActivity().getBaseContext().getPackageName() );
@@ -772,7 +872,8 @@ LocationManager locationManager;
 
     ArrayAdapter<String> testAdapter;
     ArrayList codes;
-    String desc;
+    String desc, longDesc;
+public static String section = "";
 
     class RetrieveCsvTask extends AsyncTask<String, Void, List<String[]>> {
         private Exception exception;
@@ -877,13 +978,21 @@ LocationManager locationManager;
                                 refused.setVisibility(View.VISIBLE);
                                 blow0.setVisibility(View.VISIBLE);
                             }
+
+                            if(list.get(i)[2].contains("56-05-1520"))
+                            {
+                                speedLayout.setVisibility(View.VISIBLE);
+                            }
                             descBox.setText(list.get(i)[1]);
+                            longDesc = list.get(i)[4];
+                            desc = list.get(i)[1];
                             offBox.setText(list.get(i)[2]);
                             pointsBox.setText(list.get(i)[5]);
                             cdrBox.setText(list.get(i)[3]);
                             offBox.setInputType(InputType.TYPE_NULL);
                             pointsBox.setInputType(InputType.TYPE_NULL);
                             cdrBox.setInputType(InputType.TYPE_NULL);
+                            section = list.get(i)[3] + " / " + list.get(i)[2];
                             break;
                         }
                     }
