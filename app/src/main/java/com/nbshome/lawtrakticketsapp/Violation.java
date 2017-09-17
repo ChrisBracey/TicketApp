@@ -26,6 +26,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -748,6 +749,12 @@ LocationManager locationManager;
                     cdrLayout.setVisibility(View.VISIBLE);
                     tc.setVisibility(View.GONE);
 
+                    View view = getActivity().getCurrentFocus();
+                    if (view != null) {
+                        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
+
                     flag = true;
                 } else if (!skippedCDR) {
                     RetrieveCsvTask task = new RetrieveCsvTask();
@@ -983,6 +990,7 @@ public static String section = "";
                             {
                                 speedLayout.setVisibility(View.VISIBLE);
                             }
+                            fineBox.setText(list.get(i)[list.get(i).length-1]);
                             descBox.setText(list.get(i)[1]);
                             longDesc = list.get(i)[4];
                             desc = list.get(i)[1];
