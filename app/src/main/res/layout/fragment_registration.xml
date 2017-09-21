@@ -28,7 +28,17 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+
+                android:gravity="center">
+
+                <CheckBox
+                    android:id="@+id/noReg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No Registration"
+                    android:textAlignment="viewStart"
+                    android:textSize="36sp " />
 
                 <TextView
                     android:id="@+id/header1"

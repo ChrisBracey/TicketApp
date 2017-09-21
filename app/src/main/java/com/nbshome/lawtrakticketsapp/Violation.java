@@ -54,6 +54,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.Permission;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -123,9 +124,9 @@ public class Violation extends Fragment implements View.OnClickListener, Locatio
     TextView locHeader, vioHeader;
     TextInputLayout descLayout, offLayout, pointsLayout, cdrLayout, fineLayout,locLayout, cityLayout,
             zoneLayout, roadNumLayout, latLayout, longLayout, baLayout, dateOfArrestLayout, timeOfArrestLayout,
-            timeOfVioLayout, dateOfVioLayout, speedLayout;
+            timeOfVioLayout, dateOfVioLayout, actSpeedLayout,postedSpeedLayout;
     EditText descBox, offBox, pointsBox, cdrBox, fineBox,locBox, cityBox, zoneBox, roadNumBox, latBox,
-            longBox, baBox, dateOfArrestBox, timeofArrestBox, timeOfVioBox, dateOfVioBox, speedBox;
+            longBox, baBox, dateOfArrestBox, timeofArrestBox, timeOfVioBox, dateOfVioBox, actSpeedBox, postedSpeedBox;
     CheckBox refused, blow0;
 
 
@@ -153,18 +154,31 @@ public class Violation extends Fragment implements View.OnClickListener, Locatio
         vioHeader = (TextView) v.findViewById(R.id.violationHeader);
         dateOfArrestLayout = (TextInputLayout)v.findViewById(R.id.dateOfArrestText);
         dateOfArrestBox = (EditText) v.findViewById(R.id.dateOfArrest);
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        DateFormat timeFormat = new SimpleDateFormat("kkmm");
+        Date currDate = new Date();
+
+
+        dateOfArrestBox.setText(dateFormat.format(currDate));
 
         timeOfArrestLayout = (TextInputLayout) v.findViewById(R.id.timeOfArrestText) ;
         timeofArrestBox = (EditText) v.findViewById(R.id.timeOfArrest);
+        timeofArrestBox.setText(timeFormat.format(currDate));
 
         timeOfVioLayout = (TextInputLayout) v.findViewById(R.id.timeOfVioText);
         timeOfVioBox = (EditText) v.findViewById(R.id.timeOfVio);
+        timeOfVioBox.setText(timeFormat.format(currDate));
 
         dateOfVioLayout = (TextInputLayout) v.findViewById(R.id.dateOfVioText);
         dateOfVioBox = (EditText) v.findViewById(R.id.dateOfVio);
+        dateOfVioBox.setText(dateFormat.format(currDate));
 
-        speedLayout = (TextInputLayout) v.findViewById(R.id.speedText);
-        speedBox = (EditText) v.findViewById(R.id.speed);
+        postedSpeedLayout = (TextInputLayout) v.findViewById(R.id.postedSpeedText);
+        postedSpeedBox = (EditText) v.findViewById(R.id.postedSpeed);
+
+
+        actSpeedLayout = (TextInputLayout) v.findViewById(R.id.actSpeedText);
+        actSpeedBox = (EditText) v.findViewById(R.id.actSpeed);
 
         dateOfVioBox.addTextChangedListener(new TextWatcher() {
 
@@ -430,6 +444,7 @@ LocationManager locationManager;
         }
     }
 
+
     CheckBox courtReq, ROA, insVer, vehSearched;
 
     private static final String CONFIG = "Config";
@@ -450,6 +465,9 @@ LocationManager locationManager;
                 pointsLayout.setVisibility(View.GONE);
                 cdrLayout.setVisibility(View.GONE);
                 cdrSpinner.setVisibility(View.GONE);
+
+                postedSpeedLayout.setVisibility(View.GONE);
+                actSpeedLayout.setVisibility(View.GONE);
                 statuteSpinner.setVisibility(View.GONE);
                 locLayout.setVisibility(View.VISIBLE);
                 cityLayout.setVisibility(View.VISIBLE);
@@ -498,13 +516,14 @@ LocationManager locationManager;
                 vio.setTimeOfArrest(timeofArrestBox.getText().toString());
                 vio.setViolationTime(timeOfVioBox.getText().toString());
                 vio.setViolationDate(dateOfVioBox.getText().toString());
-                vio.setPostActSpeed(speedBox.getText().toString());
+                vio.setPostActSpeed(postedSpeedBox.getText().toString()+actSpeedBox.getText().toString());
 
 
 
 
                 final String f_name = new SimpleDateFormat("yyyyMMddhhmm").format(new Date());
                 MainActivity.violators.get(MainActivity.violators.size()-1).setTicketNumber(f_name);
+                MainActivity.violators.get(MainActivity.violators.size()-1).setKillTime(System.currentTimeMillis());
                 MainActivity.courtDate = date.getSelectedItem().toString();
 
                 MainActivity.violators.get(MainActivity.violators.size() - 1).getTickets().get
@@ -816,7 +835,7 @@ LocationManager locationManager;
     public void onLocationChanged(Location location) {
         locLat = location.getLatitude();
         locLong = location.getLongitude();
-        if((locLat != 0 || locLong !=0) && !locFlag)
+        if(!locFlag)
         {
             latBox.setText(Location.convert(locLat, Location.FORMAT_SECONDS));
             longBox.setText(Location.convert(locLong, Location.FORMAT_SECONDS));
@@ -988,7 +1007,8 @@ public static String section = "";
 
                             if(list.get(i)[2].contains("56-05-1520"))
                             {
-                                speedLayout.setVisibility(View.VISIBLE);
+                                postedSpeedLayout.setVisibility(View.VISIBLE);
+                                actSpeedLayout.setVisibility(View.VISIBLE);
                             }
                             fineBox.setText(list.get(i)[list.get(i).length-1]);
                             descBox.setText(list.get(i)[1]);

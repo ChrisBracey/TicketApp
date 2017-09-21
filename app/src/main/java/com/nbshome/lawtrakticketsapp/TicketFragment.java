@@ -531,7 +531,7 @@ public class TicketFragment extends Fragment implements View.OnClickListener{
                 if (spin.getId() == R.id.dlClass) {
                     dlClass.setSelection(getIndex(dlClass, MainActivity.dlClass) + 1);
                 } else if (spin.getId() == R.id.state) {
-                    state.setSelection(getIndex(state, MainActivity.regState) + 1);
+                    state.setSelection(getIndex(state, MainActivity.state) + 1);
                 } else if (spin.getId() == R.id.dlStateSpinner) {
                     dlStateSpinner.setSelection(getIndex(dlStateSpinner, MainActivity.state) + 1);
                 } else if (spin.getId() == R.id.sex) {

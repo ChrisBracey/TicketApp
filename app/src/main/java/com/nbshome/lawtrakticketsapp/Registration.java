@@ -12,8 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nbshome.lawtrakticketsapp.enums.State;
@@ -86,6 +89,8 @@ public class Registration extends Fragment implements View.OnClickListener{
     public EditText ownerFullName, ownerAddr, ownerCity, ownerZip, vehicleYear, plateNum;
     public Spinner ownerState, plateState, vehType,  vehicleMake;
     public List vehList;
+    public CheckBox noReg;
+    public TextView header1, header2;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -127,6 +132,42 @@ public class Registration extends Fragment implements View.OnClickListener{
         plateNum      = (EditText)        v.findViewById(R.id.plateNum);
         plateState    = (MaterialSpinner) v.findViewById(R.id.plateState);
         vehType       = (MaterialSpinner) v.findViewById(R.id.vehType);
+        noReg         = (CheckBox)        v.findViewById(R.id.noReg);
+        header1       = (TextView)        v.findViewById(R.id.header1);
+        header2       = (TextView)        v.findViewById(R.id.header2);
+
+        noReg.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) {
+                    ownerFullName.setVisibility(View.GONE);
+                    ownerAddr.setVisibility(View.GONE);
+                    ownerCity.setVisibility(View.GONE);
+                    ownerState.setVisibility(View.GONE);
+                    ownerZip.setVisibility(View.GONE);
+                    vehicleMake.setVisibility(View.GONE);
+                    vehicleYear.setVisibility(View.GONE);
+                    plateNum.setVisibility(View.GONE);
+                    plateState.setVisibility(View.GONE);
+                    header1.setVisibility(View.GONE);
+                    header2.setVisibility(View.GONE);
+
+
+                } else {
+                    ownerFullName.setVisibility(View.VISIBLE);
+                    ownerAddr.setVisibility(View.VISIBLE);
+                    ownerCity.setVisibility(View.VISIBLE);
+                    ownerState.setVisibility(View.VISIBLE);
+                    ownerZip.setVisibility(View.VISIBLE);
+                    vehicleMake.setVisibility(View.VISIBLE);
+                    vehicleYear.setVisibility(View.VISIBLE);
+                    plateNum.setVisibility(View.VISIBLE);
+                    plateState.setVisibility(View.VISIBLE);
+                    header1.setVisibility(View.VISIBLE);
+                    header2.setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
         vehType.setAdapter(typeAdapter);
         //ownerState.setAdapter(adapter);
@@ -200,110 +241,102 @@ public class Registration extends Fragment implements View.OnClickListener{
         if(v.getId() == R.id.submitReg)
         {
             boolean flag = false;
-            if(ownerFullName.getText().toString().equals(""))
-            {
+            if(!noReg.isChecked()) {
+                if (ownerFullName.getText().toString().equals("")) {
 
-                Context context = getContext();
-                CharSequence err = "Name must be selected";
-                int duration = Toast.LENGTH_SHORT;
+                    Context context = getContext();
+                    CharSequence err = "Name must be selected";
+                    int duration = Toast.LENGTH_SHORT;
 
-                Toast toast = Toast.makeText(context, err, duration);
-                toast.show();
-                flag = true;
+                    Toast toast = Toast.makeText(context, err, duration);
+                    toast.show();
+                    flag = true;
+                }
+
+                if (ownerAddr.getText().toString().equals("")) {
+                    Context context = getContext();
+                    CharSequence err = "Address must be selected";
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(context, err, duration);
+                    toast.show();
+                    flag = true;
+                }
+
+                if (ownerCity.getText().toString().equals("")) {
+                    Context context = getContext();
+                    CharSequence err = "City must be selected";
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(context, err, duration);
+                    toast.show();
+                    flag = true;
+                }
+
+                if (ownerZip.getText().toString().equals("")) {
+                    Context context = getContext();
+                    CharSequence err = "ZIP must be selected";
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(context, err, duration);
+                    toast.show();
+                    flag = true;
+                }
+
+                try {
+                    String temp = ownerState.getSelectedItem().toString();
+                } catch (Exception ex) {
+                    Context context = getContext();
+                    CharSequence err = "Owner State must be selected";
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(context, err, duration);
+                    toast.show();
+                    flag = true;
+                }
+
+                if (vehicleMake.getSelectedItemPosition() == 0) {
+                    Context context = getContext();
+                    CharSequence err = "Make must be selected";
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(context, err, duration);
+                    toast.show();
+                    flag = true;
+                }
+
+                if (vehicleYear.getText().toString().equals("")) {
+                    Context context = getContext();
+                    CharSequence err = "Vehicle Year must be selected";
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(context, err, duration);
+                    toast.show();
+                    flag = true;
+                }
+
+                if (plateNum.getText().toString().equals("")) {
+                    Context context = getContext();
+                    CharSequence err = "License Plate Number must be selected";
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(context, err, duration);
+                    toast.show();
+                    flag = true;
+                }
+
+                try {
+                    String temp = plateState.getSelectedItem().toString();
+                } catch (Exception ex) {
+                    Context context = getContext();
+                    CharSequence err = "License Plate State must be selected";
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(context, err, duration);
+                    toast.show();
+                    flag = true;
+                }
             }
-
-            if(ownerAddr.getText().toString().equals(""))
-            {
-                Context context = getContext();
-                CharSequence err = "Address must be selected";
-                int duration = Toast.LENGTH_SHORT;
-
-                Toast toast = Toast.makeText(context, err, duration);
-                toast.show();
-                flag = true;
-            }
-
-            if(ownerCity.getText().toString().equals(""))
-            {
-                Context context = getContext();
-                CharSequence err = "City must be selected";
-                int duration = Toast.LENGTH_SHORT;
-
-                Toast toast = Toast.makeText(context, err, duration);
-                toast.show();
-                flag = true;
-            }
-
-            if(ownerZip.getText().toString().equals(""))
-            {
-                Context context = getContext();
-                CharSequence err = "ZIP must be selected";
-                int duration = Toast.LENGTH_SHORT;
-
-                Toast toast = Toast.makeText(context, err, duration);
-                toast.show();
-                flag = true;
-            }
-
-            try {
-                String temp = ownerState.getSelectedItem().toString();
-            } catch(Exception ex)
-            {
-                Context context = getContext();
-                CharSequence err = "Owner State must be selected";
-                int duration = Toast.LENGTH_SHORT;
-
-                Toast toast = Toast.makeText(context, err, duration);
-                toast.show();
-                flag = true;
-            }
-
-            if(vehicleMake.getSelectedItemPosition() == 0)
-            {
-                Context context = getContext();
-                CharSequence err = "Make must be selected";
-                int duration = Toast.LENGTH_SHORT;
-
-                Toast toast = Toast.makeText(context, err, duration);
-                toast.show();
-                flag = true;
-            }
-
-            if(vehicleYear.getText().toString().equals(""))
-            {
-                Context context = getContext();
-                CharSequence err = "Vehicle Year must be selected";
-                int duration = Toast.LENGTH_SHORT;
-
-                Toast toast = Toast.makeText(context, err, duration);
-                toast.show();
-                flag = true;
-            }
-
-            if(plateNum.getText().toString().equals(""))
-            {
-                Context context = getContext();
-                CharSequence err = "License Plate Number must be selected";
-                int duration = Toast.LENGTH_SHORT;
-
-                Toast toast = Toast.makeText(context, err, duration);
-                toast.show();
-                flag = true;
-            }
-
-            try {
-                String temp = plateState.getSelectedItem().toString();
-            } catch(Exception ex)
-            {
-                Context context = getContext();
-                CharSequence err = "License Plate State must be selected";
-                int duration = Toast.LENGTH_SHORT;
-
-                Toast toast = Toast.makeText(context, err, duration);
-                toast.show();
-                flag = true;
-            }
-
             try {
                 VehicleType temp = (VehicleType) vehType.getSelectedItem();
             } catch(Exception ex)
@@ -318,13 +351,21 @@ public class Registration extends Fragment implements View.OnClickListener{
             }
 
             if(!flag) {
-                Person owner = new Person(ownerFullName.getText().toString(),
-                        ownerAddr.getText().toString(), ownerCity.getText().toString(),
-                        ownerZip.getText().toString(),  ownerState.getSelectedItem().toString());
+                Person owner = new Person();
+                if(!noReg.isChecked()) {
+                    owner = new Person(ownerFullName.getText().toString(),
+                            ownerAddr.getText().toString(), ownerCity.getText().toString(),
+                            ownerZip.getText().toString(), ownerState.getSelectedItem().toString());
 
-                owner.setVehicle(new Vehicle(vehicleMake.getSelectedItem().toString(),
-                        vehicleYear.getText().toString(), plateNum.getText().toString(),
-                        plateState.getSelectedItem().toString(),  vehType.getSelectedItem().toString()));
+                    owner.setVehicle(new Vehicle(vehicleMake.getSelectedItem().toString(),
+                            vehicleYear.getText().toString(), plateNum.getText().toString(),
+                            plateState.getSelectedItem().toString(), vehType.getSelectedItem().toString()));
+                } else
+                {
+                    Vehicle veh = new Vehicle();
+                    veh.setType(vehType.getSelectedItem().toString());
+                    owner.setVehicle(veh);
+                }
 
                 MainActivity.violators.get(MainActivity.violators.size() - 1).getTickets().get
                         (MainActivity.violators.get(MainActivity.violators.size() - 1).getTickets().size() - 1).setOwner(owner);

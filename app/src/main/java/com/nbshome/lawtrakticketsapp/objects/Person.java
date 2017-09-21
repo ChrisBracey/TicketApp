@@ -6,6 +6,7 @@ import com.nbshome.lawtrakticketsapp.enums.Ethnicity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Person implements Serializable{
     private String fName;
@@ -34,6 +35,7 @@ public class Person implements Serializable{
     private String residence;
     private Vehicle vehicle;
     private ArrayList<Ticket> tickets;
+    private long killTime;
 
     public String getTicketNumber() {
         return ticketNumber;
@@ -91,6 +93,15 @@ public class Person implements Serializable{
         this.city = city;
         this.zip = zip;
         this.state = state;
+    }
+
+
+    public long getKillTime() {
+        return killTime;
+    }
+
+    public void setKillTime(long killTime) {
+        this.killTime = killTime;
     }
 
     public String getFullName() {

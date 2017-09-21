@@ -4,6 +4,7 @@ package com.nbshome.lawtrakticketsapp.objects;
 import com.nbshome.lawtrakticketsapp.enums.RoadType;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class Violation implements Serializable
 {
@@ -25,6 +26,7 @@ public class Violation implements Serializable
     private String vioLong;
     private String violationCity;
     private boolean courtAppearance;
+
 
     private boolean resultOfAcc;
     private boolean insuranceVer;

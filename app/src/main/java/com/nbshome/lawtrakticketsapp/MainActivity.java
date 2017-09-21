@@ -47,17 +47,23 @@ import com.nbshome.lawtrakticketsapp.objects.Person;
 import com.nbshome.lawtrakticketsapp.objects.Ticket;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 
 import au.com.bytecode.opencsv.CSVReader;
+
+import static java.security.AccessController.getContext;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener,
@@ -108,6 +114,25 @@ public class MainActivity extends AppCompatActivity
             for(int i = 0; i<violators.size(); ++i)
             {
                 people.add(violators.get(i));
+            }
+            deleteFile("Array");
+            for(int i = 0; i<violators.size(); ++i) {
+                long calc = System.currentTimeMillis() - violators.get(i).getKillTime();
+                Log.d(violators.get(i).getfName(), Long.toString(calc));
+                if(System.currentTimeMillis() - violators.get(i).getKillTime() >= 86400000)
+                {
+                    violators.remove(i);
+                    people.remove(i);
+
+                }
+            }
+            try {
+                createCachedFile(this.getApplicationContext() , "Array", violators);
+//                    editor.putString("Array", ObjectSerializer.serialize(MainActivity.violators));
+            } catch(Exception e)
+            {
+                e.printStackTrace();
+                Log.d("Failed", "At Vio");
             }
 
            /* Person person1 = new Person("John", "", "Doe", "", "123 streetname", "Florence", "29505", "123456789", "d", "12/16/1994", "600", "200",
@@ -177,6 +202,41 @@ public class MainActivity extends AppCompatActivity
     static boolean skipLic = false, skipReg = false;
     public static String ori;
 
+    public static void deleteCache(Context context) {
+        try {
+            File dir = context.getCacheDir();
+            deleteDir(dir);
+        } catch (Exception e) {}
+    }
+    public static boolean deleteDir(File dir) {
+        if (dir != null && dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i = 0; i < children.length; i++) {
+                boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+            return dir.delete();
+        } else if(dir!= null && dir.isFile()) {
+            return dir.delete();
+        } else {
+            return false;
+        }
+    }
+
+    public static void createCachedFile (Context context, String key, ArrayList<Person> vios) throws IOException {
+
+        String tempFile = null;
+        for (Person person : vios) {
+            FileOutputStream fos = context.openFileOutput (key, Context.MODE_PRIVATE);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject (vios);
+            oos.close ();
+            fos.close ();
+
+        }
+    }
 
     @Override
     public void onClick(View v) {
@@ -791,7 +851,14 @@ public class MainActivity extends AppCompatActivity
                                 tv2.setTextColor(Color.WHITE);
                                 tv2.setPaintFlags(tv2.getPaintFlags()| Paint.UNDERLINE_TEXT_FLAG);
 
+                                TextView tv3 = new TextView(getApplicationContext());
+                                tv3.setLayoutParams(params);
+                                tv3.setText("\n\n\n\n\n\n\n" + people.get(j).getTickets().get(0).getViolation().getViolation());
+                                tv3.setTextColor(Color.WHITE);
+                                tv3.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+
                                 card.addView(tv2);
+                                card.addView(tv3);
                                 LinearLayout cards = (LinearLayout) findViewById(R.id.cards);
                                 cards.addView(card, 0);
                             }
